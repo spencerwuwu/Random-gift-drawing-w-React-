@@ -1,11 +1,16 @@
 
 var DisplayNum = React.createClass({
 	getInitialState: function() {
-		return { number : 0 };
+		return { number : 10 };
 	},
 	handleChange : function(event){
 		var newNumber = event.target.value;
 		this.setState({number: newNumber});
+	},
+	changeNum : function (newNum) {
+		this.setState({ 
+			number: newNum
+		});
 	},
 	render : function() {
 
@@ -13,32 +18,30 @@ var DisplayNum = React.createClass({
 			<div>
 				<input type="text" onBlur={this.handleChange} />
 				<p>number of people: {this.state.number} </p>
+				<RandomNum number={this.state.number} />
 			</div>
 		);
 	}
 });
 
-/*
 var RandomNum = React.createClass({
-	render: function(){
-		var maxNum = this.props.number;
-		var exportNum = doRand(maxNum, 3);
-		var myRandomList = exportNum.map(function(exportNum, i){
-			return <p>{exportNum} </p>
+	getInitialState: function() {
+		return { number : 10 };
+	},
+	render : function() {
+		var numberR = doRand(this.props.number,4);
+		var numberRList = numberR.map(function(numberR, i){
+			return <p>{numberR}</p>;
 		});
 		return(
-			<div> 
-				<p>random numbers: </p>
-				{myRandomList}
-			</div>
+			<div> random: {numberRList} </div>
 		);
 	}
 });
-*/
 
 var ParentNum = React.createClass({
 	getInitialState: function() {
-		return { number : 0 };
+		return { number : 10 };
 	},
 	changeNum: function (newNum) {
 		this.setState({ 
@@ -52,7 +55,6 @@ var ParentNum = React.createClass({
 				<DisplayNum
 				 number={this.state.number} 
 				 onBlur={this.changeNum} />
-
 			</div>
 		);
 	}

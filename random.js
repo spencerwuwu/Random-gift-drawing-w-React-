@@ -2,7 +2,9 @@
 function doRand(maxNum, requireNum){
 	var exportNum = [];
 	var done = 0;
-
+	if(requireNum > maxNum){
+		requireNum = maxNum;
+	}
 	while(requireNum > 0){
 		if(done == 0){
 			exportNum.push(randomInt(1, maxNum));
