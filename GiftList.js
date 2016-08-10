@@ -29,12 +29,21 @@ var TodoBox = React.createClass({
 
 		var requireNumber = this.state.data.length;
 		return (
-			<div className="well">
-				<h1 className="vert-offset-top-0">Gifts:</h1>
-				<TodoList data={this.state.data} removeNode={this.handleNodeRemoval} />
-				<TodoForm onTaskSubmit={this.handleSubmit} />
-				<p> {requireNumber} </p>
-				<DisplayNum require={requireNumber} data={this.state.data} />
+			<div className="ui two column stackable grid" >
+				<div className="column" >
+					<h2 className="ui header huge dividing">
+						<div className="content">
+						<i className="gift icon"></i>Gifts</div>
+					</h2>
+					<TodoList  data={this.state.data} removeNode={this.handleNodeRemoval} />
+					<TodoForm onTaskSubmit={this.handleSubmit} />
+				</div>
+
+				<div className="ui vertical divider"></div>
+
+				<div className="column" >
+					<DisplayNum require={requireNumber} data={this.state.data} />
+				</div>
 			</div>
 		);
 	}
@@ -52,9 +61,9 @@ var TodoList = React.createClass({
 			);
 		},this);
 		return (
-			<ul className="list-group">
+			<div className="ui middle aligned divided list" >
 				{listNodes}
-			</ul>
+			</div>
 		);
 	}
 });
@@ -69,14 +78,15 @@ var TodoItem = React.createClass({
 		
 	},
 	render: function() {
-		var classes = 'list-group-item clearfix';
 		return (
-			<li className={classes}>
-				{this.props.task}
-				<div className="pull-right" role="group">
-					<button type="button" className="btn btn-xs btn-danger img-circle" onClick={this.removeNode}>&#xff38;</button>
+			<div className="ui item" >
+				<div  role="group" className="right floated content" >
+					<button type="button" className="ui icon button " onClick={this.removeNode}>
+						<i className="remove icon"></i>
+					</button>
 				</div>
-			</li>
+				<div className="ui item"> {this.props.task} </div>
+			</div>
 		);
 	}
 });
@@ -94,24 +104,13 @@ var TodoForm = React.createClass({
 	},
 	render: function() {
 		return (
-			<div className="commentForm vert-offset-top-2">
-				<hr />
-				<div className="clearfix">
-					<form className="todoForm form-horizontal" onSubmit={this.doSubmit}>
-						<div className="form-group">
-							<label htmlFor="task" className="col-md-2 control-label">Next Gifts</label>
-							<div className="col-md-10">
-								<input type="text" id="task" ref="task" className="form-control" placeholder="New Gifts" />
+					<form onSubmit={this.doSubmit} className="ui item container" >
+							<div htmlFor="task" className="ui header dividing" >Add New Gift</div>
+							<div className="ui small icon input" >
+								<input type="text" id="task" ref="task" className="" placeholder="New Gifts" />
+  								<i className="plus icon"></i>
 							</div>
-						</div>
-						<div className="row">
-							<div className="col-md-10 col-md-offset-2 text-right">
-								<input type="submit" value="Save Item" className="btn btn-primary" />
-							</div>
-						</div>
 					</form>
-				</div>
-			</div>
 		);
 	}
 });
@@ -131,9 +130,11 @@ var DisplayNum = React.createClass({
 		var requireNumber = this.props.require;
 		return(
 			<div>
-				<input type="text" onBlur={this.handleMaxChange} />
+				<div className="ui small icon input" >
+					<input type="text" onBlur={this.handleMaxChange} placeholder="input a number" />
+					<i className="users icon"></i>
+				</div>
 				<p>number of people: {this.state.maxNumber } </p>
-				<p>requirement of people: {requireNumber } </p>
 				<RandomNum maxNumber={this.state.maxNumber } requireNumber={requireNumber} data={this.props.data} />
 			</div>
 		);
@@ -143,25 +144,77 @@ var DisplayNum = React.createClass({
 var RandomNum = React.createClass({
 	getInitialState: function() {
 		return { 
-			maxNumber : 10,
-			requireNumber: 4 };
+			current : 0,
+			numberR : doRand(this.props.maxNumber),
+			result : [] };
+	},
+	drawAgain: function(){
+		if(this.state.current >= this.props.maxNumber-1){
+			alert('no more people to draw!');
+		}else {
+			this.setState({current : this.state.current+1});
+		}
+	},
+	drawNext: function(){
+		if(this.state.result.length >= this.props.requireNumber){
+			alert('End of drawing!');
+		}else{
+			var temp = this.state.result;
+			temp.push(this.state.numberR[this.state.current]);
+
+			this.setState({
+				current : this.state.current+1,
+				result: temp
+			});
+
+		}
+	},
+	drawReset: function(){
+		this.setState({
+			current : 0,
+			numberR : doRand(this.props.maxNumber),
+			result : [] });
 	},
 	render : function() {
-		var numberR = doRand(this.props.maxNumber ,this.props.requireNumber);
 		var dataList = this.props.data;
-		var numberRList = numberR.map(function(numberR, i){
-			return( <div className="row"> 
-						<div className="col-xs-6"> {numberR} </div>
-					 	<div className="col-xs-6"> {dataList[i].task} </div>
-					 </div>
+		var resultList = this.state.result;
+		var dataPrintList = dataList.map(function(dataList, i){
+			return( 
+						<div className="ui two column grid item"> 
+							<div className="ui item column">
+								<div className="content"> {dataList.task} </div> 
+							</div>
+							<div className="ui item column">
+								<div className="float right content"> {resultList[i]} </div> 
+							</div>
+						</div>
 			);
 		});
 		return(
-			<div> random: {numberRList} </div>
+			<div className="ui item">
+			<h2 className="ui header huge dividing"> {this.state.numberR[this.state.current]} </h2>
+			
+
+					<button type="button" className="ui icon button " onClick={this.drawAgain}>
+						Again
+					</button>
+					<button type="button" className="ui icon button " onClick={this.drawNext}>
+						Next
+					</button>
+					<button type="button" className="ui icon button " onClick={this.drawReset}>
+						Reset
+					</button>
+
+			<h2 className="ui header"> Results </h2>
+
+			<div className="ui middle aligned divided list">
+				{dataPrintList}
+
+			</div>
+			</div>
 		);
 	}
 });
-
 
 
 

@@ -1,10 +1,10 @@
 
-function doRand(maxNum, requireNum){
+function doRand(maxNum){
 	var exportNum = [];
 	var done = 0;
-	if(requireNum > maxNum){
-		requireNum = maxNum;
-	}
+	
+	var requireNum = maxNum;
+	
 	while(requireNum > 0){
 		if(done == 0){
 			exportNum.push(randomInt(1, maxNum));
