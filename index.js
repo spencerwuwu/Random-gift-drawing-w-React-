@@ -1,24 +1,27 @@
 
 var DisplayNum = React.createClass({
 	getInitialState: function() {
-		return { number : 10 };
+		return { 
+			maxNumber : 10,
+			requireNumber : 4 };
 	},
-	handleChange : function(event){
+	handleMaxChange : function(event){
 		var newNumber = event.target.value;
-		this.setState({number: newNumber});
+		this.setState({maxNumber : newNumber});
 	},
-	changeNum : function (newNum) {
-		this.setState({ 
-			number: newNum
-		});
+	handleRequireChange : function(event){
+		var newNumber = event.target.value;
+		this.setState({requireNumber : newNumber});
 	},
 	render : function() {
 
 		return(
 			<div>
-				<input type="text" onBlur={this.handleChange} />
-				<p>number of people: {this.state.number} </p>
-				<RandomNum number={this.state.number} />
+				<input type="text" onBlur={this.handleMaxChange} />
+				<input type="text" onBlur={this.handleRequireChange} />
+				<p>number of people: {this.state.maxNumber } </p>
+				<p>number of people: {this.state.requireNumber } </p>
+				<RandomNum maxNumber={this.state.maxNumber } requireNumber={this.state.requireNumber} />
 			</div>
 		);
 	}
@@ -26,10 +29,12 @@ var DisplayNum = React.createClass({
 
 var RandomNum = React.createClass({
 	getInitialState: function() {
-		return { number : 10 };
+		return { 
+			maxNumber : 10,
+			requireNumber: 4 };
 	},
 	render : function() {
-		var numberR = doRand(this.props.number,4);
+		var numberR = doRand(this.props.maxNumber ,this.props.requireNumber);
 		var numberRList = numberR.map(function(numberR, i){
 			return <p>{numberR}</p>;
 		});
@@ -63,9 +68,5 @@ var ParentNum = React.createClass({
 });
 
 
-ReactDOM.render(
-  <ParentNum />,
-  document.getElementById('app')
-);
 
 
