@@ -2,9 +2,9 @@ var TodoBox = React.createClass({
 	getInitialState: function () {
 		return {
 			data: [
-				{"id":"00001","task":"Din Din"},
-				{"id":"00002","task":"Don Don"},
-        		{"id":"00003","task":"Din Don Din Don"} ],
+				{"id":"00001","task":"Gift1"},
+				{"id":"00002","task":"Gift2"},
+        		{"id":"00003","task":"Gift3"} ],
 
 		};
 	},
@@ -146,7 +146,10 @@ var RandomNum = React.createClass({
 		return { 
 			current : 0,
 			numberR : doRand(this.props.maxNumber),
-			result : [] };
+			result : [],
+			startClass : "",
+			btnClass : "invisable "
+			 };
 	},
 	drawAgain: function(){
 		if(this.state.current >= this.props.maxNumber-1){
@@ -175,6 +178,15 @@ var RandomNum = React.createClass({
 			numberR : doRand(this.props.maxNumber),
 			result : [] });
 	},
+	drawStart:function() {
+
+		var temp1 = this.state.startClass;
+		var temp2 = this.state.btnClass;
+		this.setState({
+			startClass : temp2,
+			btnClass : temp1
+		})
+	},
 	render : function() {
 		var dataList = this.props.data;
 		var resultList = this.state.result;
@@ -192,18 +204,24 @@ var RandomNum = React.createClass({
 		});
 		return(
 			<div className="ui item">
+			<div className={this.state.startClass}>
+					<button type="button" className="ui icon button" onClick={this.drawStart}>
+						Start
+					</button>
+			</div>
+			<div className={this.state.btnClass}>
+			<h2 className="ui header huge">Winner: </h2>
 			<h2 className="ui header huge dividing"> {this.state.numberR[this.state.current]} </h2>
-			
-
-					<button type="button" className="ui icon button " onClick={this.drawAgain}>
+					<button type="button" className="ui icon button" onClick={this.drawAgain}>
 						Again
 					</button>
-					<button type="button" className="ui icon button " onClick={this.drawNext}>
+					<button type="button" className="ui icon button" onClick={this.drawNext}>
 						Next
 					</button>
-					<button type="button" className="ui icon button " onClick={this.drawReset}>
+					<button type="button" className="ui icon button" onClick={this.drawReset}>
 						Reset
 					</button>
+			</div>
 
 			<h2 className="ui header"> Results </h2>
 
