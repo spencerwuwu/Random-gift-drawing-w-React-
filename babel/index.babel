@@ -5,7 +5,8 @@ var TodoBox = React.createClass({
 				{"id":"00001","task":"Gift1"},
 				{"id":"00002","task":"Gift2"},
         		{"id":"00003","task":"Gift3"} ],
-
+        	leftColumn: "" ,
+        	rightColumn: "behind"
 		};
 	},
 	generateId: function () {
@@ -25,24 +26,40 @@ var TodoBox = React.createClass({
 		data = data.concat([{id, task}]);
 		this.setState({data});
 	},
+	drawBegin: function(){
+		this.setState({
+			leftColumn: "behind",
+			rightColumn: ""
+		});
+	},
 	render: function() {
 
 		var requireNumber = this.state.data.length;
 		return (
 			<div className="ui two column stackable grid" >
 				<div className="column" >
-					<h2 className="ui header huge dividing">
-						<div className="content">
-						<i className="gift icon"></i>Gifts</div>
-					</h2>
-					<TodoList  data={this.state.data} removeNode={this.handleNodeRemoval} />
-					<TodoForm onTaskSubmit={this.handleSubmit} />
+					<div className={this.state.leftColumn}>
+						<h2 className="ui header huge dividing">
+							<div className="content">
+							<i className="gift icon"></i>Gifts</div>
+						</h2>
+						<TodoList  data={this.state.data} removeNode={this.handleNodeRemoval} />
+						<TodoForm onTaskSubmit={this.handleSubmit} />
+						<p> </p>
+						<div className="ui content">
+							<button type="button" className="ui icon button " onClick={this.drawBegin}>
+							Next
+							</button>
+						</div>
+					</div>
 				</div>
 
 				<div className="ui vertical divider"></div>
 
 				<div className="column" >
-					<DisplayNum require={requireNumber} data={this.state.data} />
+					<div className={this.state.rightColumn}>
+						<DisplayNum  require={requireNumber} data={this.state.data} />
+					</div>
 				</div>
 			</div>
 		);
@@ -120,22 +137,40 @@ var DisplayNum = React.createClass({
 	getInitialState: function() {
 		return { 
 			maxNumber : 10,
-			requireNumber : 4,};
+			requireNumber : 4,
+        	leftColumn: "" ,
+        	rightColumn: "behind"};
 	},
 	handleMaxChange : function(event){
 		var newNumber = event.target.value;
 		this.setState({maxNumber : newNumber});
 	},
+	drawBegin: function(){
+		this.setState({
+			leftColumn: "behind",
+			rightColumn: ""
+		});
+	},
 	render : function() {
 		var requireNumber = this.props.require;
 		return(
 			<div>
-				<div className="ui small icon input" >
-					<input type="text" onBlur={this.handleMaxChange} placeholder="input number, default 10" />
-					<i className="users icon"></i>
+				<div className={this.state.leftColumn}>
+					<div className="ui small icon input" >
+						<input type="text" onBlur={this.handleMaxChange} placeholder="input number, default 10" />
+						<i className="users icon"></i>
+					</div>
+					<p>number of people: {this.state.maxNumber } </p>
+						<p> </p>
+						<div className="ui content">
+							<button type="button" className="ui icon button " onClick={this.drawBegin}>
+							Finish setting
+							</button>
+						</div>
+					</div>
+				<div className={this.state.rightColumn}>	
+					<RandomNum maxNumber={this.state.maxNumber } requireNumber={requireNumber} data={this.props.data} />
 				</div>
-				<p>number of people: {this.state.maxNumber } </p>
-				<RandomNum maxNumber={this.state.maxNumber } requireNumber={requireNumber} data={this.props.data} />
 			</div>
 		);
 	}
@@ -148,7 +183,8 @@ var RandomNum = React.createClass({
 			numberR : doRand(this.props.maxNumber),
 			result : [],
 			startClass : "",
-			btnClass : "invisable "
+			btnClass : "invisable ",
+			currentGift: 0
 			 };
 	},
 	drawAgain: function(){
@@ -167,7 +203,8 @@ var RandomNum = React.createClass({
 
 			this.setState({
 				current : this.state.current+1,
-				result: temp
+				result: temp,
+				currentGift: this.state.currentGift+1
 			});
 
 		}
@@ -176,7 +213,8 @@ var RandomNum = React.createClass({
 		this.setState({
 			current : 0,
 			numberR : doRand(this.props.maxNumber),
-			result : [] });
+			result : [],
+			currentGift: 0 });
 	},
 	drawStart:function() {
 
@@ -211,8 +249,10 @@ var RandomNum = React.createClass({
 					</button>
 			</div>
 			<div className={this.state.btnClass}>
-			<h2 className="ui header huge">Winner: </h2>
-			<h2 className="ui header huge dividing"> {this.state.numberR[this.state.current]} </h2>
+				<div className="ui raised segment">
+					<h2 className="ui header ">{dataList[this.state.currentGift].task}</h2>
+					<h1 className="ui header huge center aligned dividing"> {this.state.numberR[this.state.current]} </h1>
+
 					<button type="button" className="ui icon button" onClick={this.drawAgain}>
 						Again
 					</button>
@@ -222,6 +262,7 @@ var RandomNum = React.createClass({
 					<button type="button" className="ui icon button" onClick={this.drawReset}>
 						Reset
 					</button>
+				</div>
 			</div>
 
 			<h2 className="ui header"> Results </h2>

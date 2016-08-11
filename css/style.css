@@ -1,3 +1,7 @@
 .invisable {
   display: none;
 }
+
+.behind {
+  opacity: 0.1;
+}

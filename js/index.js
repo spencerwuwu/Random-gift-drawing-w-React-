@@ -1,11 +1,13 @@
 "use strict";
+
 var TodoBox = React.createClass({
 	displayName: "TodoBox",
 
 	getInitialState: function getInitialState() {
 		return {
-			data: [{ "id": "00001", "task": "Gift1" }, { "id": "00002", "task": "Gift2" }, { "id": "00003", "task": "Gift3" }]
-
+			data: [{ "id": "00001", "task": "Gift1" }, { "id": "00002", "task": "Gift2" }, { "id": "00003", "task": "Gift3" }],
+			leftColumn: "",
+			rightColumn: "behind"
 		};
 	},
 	generateId: function generateId() {
@@ -25,6 +27,12 @@ var TodoBox = React.createClass({
 		data = data.concat([{ id: id, task: task }]);
 		this.setState({ data: data });
 	},
+	drawBegin: function drawBegin() {
+		this.setState({
+			leftColumn: "behind",
+			rightColumn: ""
+		});
+	},
 	render: function render() {
 
 		var requireNumber = this.state.data.length;
@@ -35,23 +43,45 @@ var TodoBox = React.createClass({
 				"div",
 				{ className: "column" },
 				React.createElement(
-					"h2",
-					{ className: "ui header huge dividing" },
+					"div",
+					{ className: this.state.leftColumn },
+					React.createElement(
+						"h2",
+						{ className: "ui header huge dividing" },
+						React.createElement(
+							"div",
+							{ className: "content" },
+							React.createElement("i", { className: "gift icon" }),
+							"Gifts"
+						)
+					),
+					React.createElement(TodoList, { data: this.state.data, removeNode: this.handleNodeRemoval }),
+					React.createElement(TodoForm, { onTaskSubmit: this.handleSubmit }),
+					React.createElement(
+						"p",
+						null,
+						" "
+					),
 					React.createElement(
 						"div",
-						{ className: "content" },
-						React.createElement("i", { className: "gift icon" }),
-						"Gifts"
+						{ className: "ui content" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "ui icon button ", onClick: this.drawBegin },
+							"Next"
+						)
 					)
-				),
-				React.createElement(TodoList, { data: this.state.data, removeNode: this.handleNodeRemoval }),
-				React.createElement(TodoForm, { onTaskSubmit: this.handleSubmit })
+				)
 			),
 			React.createElement("div", { className: "ui vertical divider" }),
 			React.createElement(
 				"div",
 				{ className: "column" },
-				React.createElement(DisplayNum, { require: requireNumber, data: this.state.data })
+				React.createElement(
+					"div",
+					{ className: this.state.rightColumn },
+					React.createElement(DisplayNum, { require: requireNumber, data: this.state.data })
+				)
 			)
 		);
 	}
@@ -147,11 +177,19 @@ var DisplayNum = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			maxNumber: 10,
-			requireNumber: 4 };
+			requireNumber: 4,
+			leftColumn: "",
+			rightColumn: "behind" };
 	},
 	handleMaxChange: function handleMaxChange(event) {
 		var newNumber = event.target.value;
 		this.setState({ maxNumber: newNumber });
+	},
+	drawBegin: function drawBegin() {
+		this.setState({
+			leftColumn: "behind",
+			rightColumn: ""
+		});
 	},
 	render: function render() {
 		var requireNumber = this.props.require;
@@ -160,18 +198,40 @@ var DisplayNum = React.createClass({
 			null,
 			React.createElement(
 				"div",
-				{ className: "ui small icon input" },
-				React.createElement("input", { type: "text", onBlur: this.handleMaxChange, placeholder: "input number, default 10" }),
-				React.createElement("i", { className: "users icon" })
+				{ className: this.state.leftColumn },
+				React.createElement(
+					"div",
+					{ className: "ui small icon input" },
+					React.createElement("input", { type: "text", onBlur: this.handleMaxChange, placeholder: "input number, default 10" }),
+					React.createElement("i", { className: "users icon" })
+				),
+				React.createElement(
+					"p",
+					null,
+					"number of people: ",
+					this.state.maxNumber,
+					" "
+				),
+				React.createElement(
+					"p",
+					null,
+					" "
+				),
+				React.createElement(
+					"div",
+					{ className: "ui content" },
+					React.createElement(
+						"button",
+						{ type: "button", className: "ui icon button ", onClick: this.drawBegin },
+						"Finish setting"
+					)
+				)
 			),
 			React.createElement(
-				"p",
-				null,
-				"number of people: ",
-				this.state.maxNumber,
-				" "
-			),
-			React.createElement(RandomNum, { maxNumber: this.state.maxNumber, requireNumber: requireNumber, data: this.props.data })
+				"div",
+				{ className: this.state.rightColumn },
+				React.createElement(RandomNum, { maxNumber: this.state.maxNumber, requireNumber: requireNumber, data: this.props.data })
+			)
 		);
 	}
 });
@@ -185,7 +245,8 @@ var RandomNum = React.createClass({
 			numberR: doRand(this.props.maxNumber),
 			result: [],
 			startClass: "",
-			btnClass: "invisable "
+			btnClass: "invisable ",
+			currentGift: 0
 		};
 	},
 	drawAgain: function drawAgain() {
@@ -204,7 +265,8 @@ var RandomNum = React.createClass({
 
 			this.setState({
 				current: this.state.current + 1,
-				result: temp
+				result: temp,
+				currentGift: this.state.currentGift + 1
 			});
 		}
 	},
@@ -212,7 +274,8 @@ var RandomNum = React.createClass({
 		this.setState({
 			current: 0,
 			numberR: doRand(this.props.maxNumber),
-			result: [] });
+			result: [],
+			currentGift: 0 });
 	},
 	drawStart: function drawStart() {
 
@@ -271,31 +334,35 @@ var RandomNum = React.createClass({
 				"div",
 				{ className: this.state.btnClass },
 				React.createElement(
-					"h2",
-					{ className: "ui header huge" },
-					"Winner: "
-				),
-				React.createElement(
-					"h2",
-					{ className: "ui header huge dividing" },
-					" ",
-					this.state.numberR[this.state.current],
-					" "
-				),
-				React.createElement(
-					"button",
-					{ type: "button", className: "ui icon button", onClick: this.drawAgain },
-					"Again"
-				),
-				React.createElement(
-					"button",
-					{ type: "button", className: "ui icon button", onClick: this.drawNext },
-					"Next"
-				),
-				React.createElement(
-					"button",
-					{ type: "button", className: "ui icon button", onClick: this.drawReset },
-					"Reset"
+					"div",
+					{ className: "ui raised segment" },
+					React.createElement(
+						"h2",
+						{ className: "ui header " },
+						dataList[this.state.currentGift].task
+					),
+					React.createElement(
+						"h1",
+						{ className: "ui header huge center aligned dividing" },
+						" ",
+						this.state.numberR[this.state.current],
+						" "
+					),
+					React.createElement(
+						"button",
+						{ type: "button", className: "ui icon button", onClick: this.drawAgain },
+						"Again"
+					),
+					React.createElement(
+						"button",
+						{ type: "button", className: "ui icon button", onClick: this.drawNext },
+						"Next"
+					),
+					React.createElement(
+						"button",
+						{ type: "button", className: "ui icon button", onClick: this.drawReset },
+						"Reset"
+					)
 				)
 			),
 			React.createElement(
