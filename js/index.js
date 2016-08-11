@@ -1,5 +1,4 @@
 "use strict";
-
 var TodoBox = React.createClass({
 	displayName: "TodoBox",
 
@@ -313,4 +312,4 @@ var RandomNum = React.createClass({
 	}
 });
 
-React.render(React.createElement(TodoBox, null), document.getElementById('todo'));
+ReactDOM.render(React.createElement(TodoBox, null), document.getElementById('todo'));
