@@ -312,4 +312,4 @@ var RandomNum = React.createClass({
 	}
 });
 
-ReactDOM.render(React.createElement(TodoBox, null), document.getElementById('todo'));
+React.render(React.createElement(TodoBox, null), document.getElementById('todo'));
