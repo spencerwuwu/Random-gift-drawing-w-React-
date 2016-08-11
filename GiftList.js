@@ -131,7 +131,7 @@ var DisplayNum = React.createClass({
 		return(
 			<div>
 				<div className="ui small icon input" >
-					<input type="text" onBlur={this.handleMaxChange} placeholder="input a number" />
+					<input type="text" onBlur={this.handleMaxChange} placeholder="input number, default 10" />
 					<i className="users icon"></i>
 				</div>
 				<p>number of people: {this.state.maxNumber } </p>
@@ -183,6 +183,7 @@ var RandomNum = React.createClass({
 		var temp1 = this.state.startClass;
 		var temp2 = this.state.btnClass;
 		this.setState({
+			numberR : doRand(this.props.maxNumber),
 			startClass : temp2,
 			btnClass : temp1
 		})
