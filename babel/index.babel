@@ -194,20 +194,28 @@ var RandomNum = React.createClass({
 			this.setState({current : this.state.current+1});
 		}
 	},
-	drawNext: function(){
-		if(this.state.result.length >= this.props.requireNumber){
-			alert('End of drawing!');
+	drawNext: function(){	
+		if(this.state.currentGift < this.props.data.length - 1){
+				var temp = this.state.result;
+				temp.push(this.state.numberR[this.state.current]);
+
+				this.setState({
+					current : this.state.current+1,
+					result: temp,
+					currentGift: this.state.currentGift+1
+				});
+
+			
 		}else{
-			var temp = this.state.result;
-			temp.push(this.state.numberR[this.state.current]);
+				alert('End of drawing!');
+				var temp = this.state.result;
+				temp.push(this.state.numberR[this.state.current]);
 
-			this.setState({
-				current : this.state.current+1,
-				result: temp,
-				currentGift: this.state.currentGift+1
-			});
-
+				this.setState({
+					result: temp
+				});
 		}
+			
 	},
 	drawReset: function(){
 		this.setState({

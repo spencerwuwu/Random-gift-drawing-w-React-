@@ -257,9 +257,7 @@ var RandomNum = React.createClass({
 		}
 	},
 	drawNext: function drawNext() {
-		if (this.state.result.length >= this.props.requireNumber) {
-			alert('End of drawing!');
-		} else {
+		if (this.state.currentGift < this.props.data.length - 1) {
 			var temp = this.state.result;
 			temp.push(this.state.numberR[this.state.current]);
 
@@ -267,6 +265,14 @@ var RandomNum = React.createClass({
 				current: this.state.current + 1,
 				result: temp,
 				currentGift: this.state.currentGift + 1
+			});
+		} else {
+			alert('End of drawing!');
+			var temp = this.state.result;
+			temp.push(this.state.numberR[this.state.current]);
+
+			this.setState({
+				result: temp
 			});
 		}
 	},
