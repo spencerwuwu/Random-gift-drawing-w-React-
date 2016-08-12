@@ -46,6 +46,8 @@ var TodoBox = React.createClass({
 						<TodoList  data={this.state.data} removeNode={this.handleNodeRemoval} />
 						<TodoForm onTaskSubmit={this.handleSubmit} />
 						<p> </p>
+						<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
+						<p> </p>
 						<div className="ui content">
 							<button type="button" className="ui icon button " onClick={this.drawBegin}>
 							Next
@@ -54,7 +56,6 @@ var TodoBox = React.createClass({
 					</div>
 				</div>
 
-				<div className="ui vertical divider"></div>
 
 				<div className="column" >
 					<div className={this.state.rightColumn}>
@@ -231,7 +232,7 @@ var RandomNum = React.createClass({
 		this.setState({
 			numberR : doRand(this.props.maxNumber),
 			startClass : temp2,
-			btnClass : temp1
+			btnClass : "finalPopout"
 		})
 	},
 	render : function() {
@@ -251,34 +252,39 @@ var RandomNum = React.createClass({
 		});
 		return(
 			<div className="ui item">
-			<div className={this.state.startClass}>
-					<button type="button" className="ui icon button" onClick={this.drawStart}>
-						Start
-					</button>
-			</div>
-			<div className={this.state.btnClass}>
-				<div className="ui raised segment">
-					<h2 className="ui header ">{dataList[this.state.currentGift].task}</h2>
-					<h1 className="ui header huge center aligned dividing"> {this.state.numberR[this.state.current]} </h1>
-
-					<button type="button" className="ui icon button" onClick={this.drawAgain}>
-						Again
-					</button>
-					<button type="button" className="ui icon button" onClick={this.drawNext}>
-						Next
-					</button>
-					<button type="button" className="ui icon button" onClick={this.drawReset}>
-						Reset
-					</button>
+				<div className={this.state.startClass}>
+						<button type="button" className="ui icon button" onClick={this.drawStart}>
+							Start
+						</button>
 				</div>
-			</div>
+				<div className={this.state.btnClass}>
+					<div className="ui raised very padded text container segment">
+						<div className="ui raised segment">
+							<h2 className="ui header ">{dataList[this.state.currentGift].task}</h2>
+							<h1 className="ui header huge center aligned dividing"> {this.state.numberR[this.state.current]} </h1>
+							<p>
+								<button type="button" className="ui icon button" onClick={this.drawAgain}>
+									Again
+								</button>
+								<button type="button" className="ui icon button" onClick={this.drawNext}>
+									Next
+								</button>
+								<button type="button" className="ui icon button" onClick={this.drawReset}>
+									Reset
+								</button>
+							</p>
+							<p className="notclear">To restart from the beginning, refresh the page </p> 
+						</div>
+					
 
-			<h2 className="ui header"> Results </h2>
+						<h2 className="ui header"> Results </h2>
 
-			<div className="ui middle aligned divided list">
-				{dataPrintList}
+						<div className="ui middle aligned divided list">
+							{dataPrintList}
 
-			</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	}

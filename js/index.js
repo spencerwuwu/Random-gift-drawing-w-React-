@@ -64,6 +64,22 @@ var TodoBox = React.createClass({
 					),
 					React.createElement(
 						"div",
+						{ className: "notclear" },
+						" ",
+						React.createElement(
+							"p",
+							null,
+							" Press Enter to add new gift to list"
+						),
+						" "
+					),
+					React.createElement(
+						"p",
+						null,
+						" "
+					),
+					React.createElement(
+						"div",
 						{ className: "ui content" },
 						React.createElement(
 							"button",
@@ -73,7 +89,6 @@ var TodoBox = React.createClass({
 					)
 				)
 			),
-			React.createElement("div", { className: "ui vertical divider" }),
 			React.createElement(
 				"div",
 				{ className: "column" },
@@ -290,7 +305,7 @@ var RandomNum = React.createClass({
 		this.setState({
 			numberR: doRand(this.props.maxNumber),
 			startClass: temp2,
-			btnClass: temp1
+			btnClass: "finalPopout"
 		});
 	},
 	render: function render() {
@@ -341,45 +356,58 @@ var RandomNum = React.createClass({
 				{ className: this.state.btnClass },
 				React.createElement(
 					"div",
-					{ className: "ui raised segment" },
+					{ className: "ui raised very padded text container segment" },
+					React.createElement(
+						"div",
+						{ className: "ui raised segment" },
+						React.createElement(
+							"h2",
+							{ className: "ui header " },
+							dataList[this.state.currentGift].task
+						),
+						React.createElement(
+							"h1",
+							{ className: "ui header huge center aligned dividing" },
+							" ",
+							this.state.numberR[this.state.current],
+							" "
+						),
+						React.createElement(
+							"p",
+							null,
+							React.createElement(
+								"button",
+								{ type: "button", className: "ui icon button", onClick: this.drawAgain },
+								"Again"
+							),
+							React.createElement(
+								"button",
+								{ type: "button", className: "ui icon button", onClick: this.drawNext },
+								"Next"
+							),
+							React.createElement(
+								"button",
+								{ type: "button", className: "ui icon button", onClick: this.drawReset },
+								"Reset"
+							)
+						),
+						React.createElement(
+							"p",
+							{ className: "notclear" },
+							"To restart from the beginning, refresh the page "
+						)
+					),
 					React.createElement(
 						"h2",
-						{ className: "ui header " },
-						dataList[this.state.currentGift].task
+						{ className: "ui header" },
+						" Results "
 					),
 					React.createElement(
-						"h1",
-						{ className: "ui header huge center aligned dividing" },
-						" ",
-						this.state.numberR[this.state.current],
-						" "
-					),
-					React.createElement(
-						"button",
-						{ type: "button", className: "ui icon button", onClick: this.drawAgain },
-						"Again"
-					),
-					React.createElement(
-						"button",
-						{ type: "button", className: "ui icon button", onClick: this.drawNext },
-						"Next"
-					),
-					React.createElement(
-						"button",
-						{ type: "button", className: "ui icon button", onClick: this.drawReset },
-						"Reset"
+						"div",
+						{ className: "ui middle aligned divided list" },
+						dataPrintList
 					)
 				)
-			),
-			React.createElement(
-				"h2",
-				{ className: "ui header" },
-				" Results "
-			),
-			React.createElement(
-				"div",
-				{ className: "ui middle aligned divided list" },
-				dataPrintList
 			)
 		);
 	}
