@@ -1,10 +1,10 @@
-var TodoBox = React.createClass({
+var GiftBox = React.createClass({
 	getInitialState: function () {
 		return {
 			data: [
-				{"id":"00001","task":"Gift1"},
-				{"id":"00002","task":"Gift2"},
-        		{"id":"00003","task":"Gift3"} ],
+				{"id":"00001","GiftName":"Gift1"},
+				{"id":"00002","GiftName":"Gift2"},
+        		{"id":"00003","GiftName":"Gift3"} ],
         	leftColumn: "" ,
         	rightColumn: "behind"
 		};
@@ -20,10 +20,10 @@ var TodoBox = React.createClass({
 		this.setState({data});
 		return;
 	},
-	handleSubmit: function (task) {
+	handleSubmit: function (GiftName) {
 		var data = this.state.data;
 		var id = this.generateId().toString();
-		data = data.concat([{id, task}]);
+		data = data.concat([{id, GiftName}]);
 		this.setState({data});
 	},
 	drawBegin: function(){
@@ -43,13 +43,13 @@ var TodoBox = React.createClass({
 							<div className="content">
 							<i className="gift icon"></i>Gifts</div>
 						</h2>
-						<TodoList  data={this.state.data} removeNode={this.handleNodeRemoval} />
-						<TodoForm onTaskSubmit={this.handleSubmit} />
+						<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} />
+						<GiftForm onGiftNameSubmit={this.handleSubmit} />
 						<p> </p>
 						<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
 						<p> </p>
 						<div className="ui content">
-							<button type="button" className="ui icon button " onClick={this.drawBegin}>
+							<button type="button" className="ui icon blue button " onClick={this.drawBegin}>
 							Next
 							</button>
 						</div>
@@ -67,7 +67,7 @@ var TodoBox = React.createClass({
 	}
 });
 
-var TodoList = React.createClass({
+var GiftList = React.createClass({
 	removeNode: function (nodeId) {
 		this.props.removeNode(nodeId);
 		return;
@@ -75,7 +75,7 @@ var TodoList = React.createClass({
 	render: function() {
 		var listNodes = this.props.data.map(function (listItem) {
 			return (
-				<TodoItem key={listItem.id} nodeId={listItem.id} task={listItem.task} removeNode={this.removeNode} />
+				<GiftItem key={listItem.id} nodeId={listItem.id} GiftName={listItem.GiftName} removeNode={this.removeNode} />
 			);
 		},this);
 		return (
@@ -86,7 +86,7 @@ var TodoList = React.createClass({
 	}
 });
 
-var TodoItem = React.createClass({
+var GiftItem = React.createClass({
 	removeNode: function (e) {
 		e.preventDefault();
 		this.props.removeNode(this.props.nodeId);
@@ -103,29 +103,29 @@ var TodoItem = React.createClass({
 						<i className="remove icon"></i>
 					</button>
 				</div>
-				<div className="ui item"> {this.props.task} </div>
+				<div className="ui item"> {this.props.GiftName} </div>
 			</div>
 		);
 	}
 });
 
-var TodoForm = React.createClass({
+var GiftForm = React.createClass({
 	doSubmit: function (e) {
 		e.preventDefault();
-		var task = React.findDOMNode(this.refs.task).value.trim();
-		if (!task) {
+		var GiftName = React.findDOMNode(this.refs.GiftName).value.trim();
+		if (!GiftName) {
 			return;
 		}
-		this.props.onTaskSubmit(task);
-		React.findDOMNode(this.refs.task).value = '';
+		this.props.onGiftNameSubmit(GiftName);
+		React.findDOMNode(this.refs.GiftName).value = '';
 		return;
 	},
 	render: function() {
 		return (
 					<form onSubmit={this.doSubmit} className="ui item container" >
-							<div htmlFor="task" className="ui header dividing" >Add New Gift</div>
+							<div htmlFor="GiftName" className="ui header dividing" >Add New Gift</div>
 							<div className="ui small icon input" >
-								<input type="text" id="task" ref="task" className="" placeholder="New Gifts" />
+								<input type="text" id="GiftName" ref="GiftName" className="" placeholder="New Gifts" />
   								<i className="plus icon"></i>
 							</div>
 					</form>
@@ -242,7 +242,7 @@ var RandomNum = React.createClass({
 			return( 
 						<div className="ui two column grid item"> 
 							<div className="ui item column">
-								<div className="content"> {dataList.task} </div> 
+								<div className="content"> {dataList.GiftName} </div> 
 							</div>
 							<div className="ui item column">
 								<div className="float right content"> {resultList[i]} </div> 
@@ -260,7 +260,7 @@ var RandomNum = React.createClass({
 				<div className={this.state.btnClass}>
 					<div className="ui raised very padded text container segment">
 						<div className="ui raised segment">
-							<h2 className="ui header ">{dataList[this.state.currentGift].task}</h2>
+							<h2 className="ui header ">{dataList[this.state.currentGift].GiftName}</h2>
 							<h1 className="ui header huge center aligned dividing"> {this.state.numberR[this.state.current]} </h1>
 							<p>
 								<button type="button" className="ui icon button" onClick={this.drawAgain}>
@@ -293,6 +293,6 @@ var RandomNum = React.createClass({
 
 
 React.render(
-	<TodoBox />,
+	<GiftBox />,
 	document.getElementById('todo')
 );
