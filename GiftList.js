@@ -6,6 +6,8 @@ var GiftBox = React.createClass({
 				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
         		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
         	backDoorList: [],
+        	RandomList: [],
+        	PlayerList: [],
         	leftColumn: "" ,
         	rightColumn: ""
 		};
@@ -44,6 +46,9 @@ var GiftBox = React.createClass({
 			backDoorList: backDoorList
 		});
 	},
+	handlePlayerList: function(){
+
+	},
 	drawBegin: function(){
 		this.setState({
 			leftColumn: "behind",
@@ -79,7 +84,7 @@ var GiftBox = React.createClass({
 
 				<div className="column" >
 					<div className={this.state.rightColumn}>
-						<DisplayNum  require={requireNumber} data={this.state.data} />
+						<PlayerBox  require={requireNumber} data={this.state.data} setplayer={this.handlePlayerList} />
 					</div>
 				</div>
 			</div>
@@ -170,17 +175,68 @@ var GiftForm = React.createClass({
 });
 
 
-var DisplayNum = React.createClass({
+var PlayerBox = React.createClass({
+	getInitialState: function() {
+		return{
+			PlayerNumber: 0,
+			PlayerList: []
+
+		};
+	},
+	handlePlayerChange : function(event){
+		var newNumber = event.target.value;
+		this.setState({PlayerNumber : newNumber,
+					PlayerList: getPlayerList(newNumber)
+		});
+
+	},
+	render: function(){
+		var Players = this.state.PlayerList.map(player, i){
+			return(
+				<div>
+					<div className="ui item" >
+						<div className="right floated content" >
+							<div className="ui small icon input" >
+								<input type="text" onBlur={this.handlePlayerName} placeholder="name" />
+							<i className="users icon"></i>
+							</div>
+
+						</div>
+						<div className="ui item"> {player.id}  {player.PlayerName} </div>
+					</div>
+
+
+		
+				</div>
+			);
+		};
+		return(
+			<div>
+				<div className="ui small icon input" >
+					<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" />
+					<i className="users icon"></i>
+				</div>
+				<p> {this.state.PlayerNumber} </p>
+
+			</div>
+
+		);
+	}
+});
+
+/*
+var Player = React.createClass({
 	getInitialState: function() {
 		return { 
-			maxNumber : 10,
+			PlayerNumber : 10,
 			requireNumber : 4,
+			PlayerList: [],
         	leftColumn: "" ,
-        	rightColumn: "behind"};
+        	rightColumn: ""};
 	},
-	handleMaxChange : function(event){
+	handlePlayerChange : function(event){
 		var newNumber = event.target.value;
-		this.setState({maxNumber : newNumber});
+		this.setState({PlayerNumber : newNumber});
 	},
 	drawBegin: function(){
 		this.setState({
@@ -194,10 +250,10 @@ var DisplayNum = React.createClass({
 			<div>
 				<div className={this.state.leftColumn}>
 					<div className="ui small icon input" >
-						<input type="text" onBlur={this.handleMaxChange} placeholder="input number, default 10" />
+						<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" />
 						<i className="users icon"></i>
 					</div>
-					<p>number of people: {this.state.maxNumber } </p>
+					<p>number of people: {this.state.PlayerNumber } </p>
 						<p> </p>
 						<div className="ui content">
 							<button type="button" className="ui icon button " onClick={this.drawBegin}>
@@ -205,9 +261,6 @@ var DisplayNum = React.createClass({
 							</button>
 						</div>
 					</div>
-				<div className={this.state.rightColumn}>	
-					<RandomNum maxNumber={this.state.maxNumber } requireNumber={requireNumber} data={this.props.data} />
-				</div>
 			</div>
 		);
 	}
@@ -217,7 +270,7 @@ var RandomNum = React.createClass({
 	getInitialState: function() {
 		return { 
 			current : 0,
-			numberR : doRand(this.props.maxNumber),
+			numberR : doRand(this.props.PlayerNumber),
 			result : [],
 			startClass : "",
 			btnClass : "invisable ",
@@ -225,7 +278,7 @@ var RandomNum = React.createClass({
 			 };
 	},
 	drawAgain: function(){
-		if(this.state.current >= this.props.maxNumber-1){
+		if(this.state.current >= this.props.PlayerNumber-1){
 			alert('no more people to draw!');
 		}else {
 			this.setState({current : this.state.current+1});
@@ -257,7 +310,7 @@ var RandomNum = React.createClass({
 	drawReset: function(){
 		this.setState({
 			current : 0,
-			numberR : doRand(this.props.maxNumber),
+			numberR : doRand(this.props.PlayerNumber),
 			result : [],
 			currentGift: 0 });
 	},
@@ -266,7 +319,7 @@ var RandomNum = React.createClass({
 		var temp1 = this.state.startClass;
 		var temp2 = this.state.btnClass;
 		this.setState({
-			numberR : doRand(this.props.maxNumber),
+			numberR : doRand(this.props.PlayerNumber),
 			startClass : temp2,
 			btnClass : "finalPopout"
 		})
@@ -326,7 +379,7 @@ var RandomNum = React.createClass({
 	}
 });
 
-
+*/
 
 React.render(
 	<GiftBox />,
