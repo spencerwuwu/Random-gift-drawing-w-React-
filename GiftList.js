@@ -2,11 +2,12 @@ var GiftBox = React.createClass({
 	getInitialState: function () {
 		return {
 			data: [
-				{"id":"00001","GiftName":"Gift1"},
-				{"id":"00002","GiftName":"Gift2"},
-        		{"id":"00003","GiftName":"Gift3"} ],
+				{"id":"00001","GiftName":"Gift1","BackDoor":-1},
+				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
+        		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
+        	backDoorList: [],
         	leftColumn: "" ,
-        	rightColumn: "behind"
+        	rightColumn: ""
 		};
 	},
 	generateId: function () {
@@ -23,8 +24,25 @@ var GiftBox = React.createClass({
 	handleSubmit: function (GiftName) {
 		var data = this.state.data;
 		var id = this.generateId().toString();
-		data = data.concat([{id, GiftName}]);
+		var num = -1;
+		data = data.concat([{id, GiftName, num}]);
 		this.setState({data});
+	},
+	handleAddBackdoor: function(backDoorData){
+		var targetId = backDoorData.id;
+		var backDoorNum = backDoorData.number;
+		var index = this.state.data.findIndex(function(data){
+			return data.id == targetId;
+		});
+		var data = this.state.data;
+		data[index].BackDoor = backDoorNum;
+		var backDoorList = data.map(function(item){
+			return item.BackDoor;
+		});
+		this.setState({
+			data: data,
+			backDoorList: backDoorList
+		});
 	},
 	drawBegin: function(){
 		this.setState({
@@ -33,7 +51,12 @@ var GiftBox = React.createClass({
 		});
 	},
 	render: function() {
-
+		console.log("Gift List:");
+		console.log(this.state.data.map(function(item){
+			return item;
+		}));
+		console.log("BackDoor List:");
+		console.log(this.state.backDoorList);
 		var requireNumber = this.state.data.length;
 		return (
 			<div className="ui two column stackable grid" >
@@ -43,15 +66,12 @@ var GiftBox = React.createClass({
 							<div className="content">
 							<i className="gift icon"></i>Gifts</div>
 						</h2>
-						<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} />
+						<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} addBackdoor={this.handleAddBackdoor} />
 						<GiftForm onGiftNameSubmit={this.handleSubmit} />
 						<p> </p>
 						<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
 						<p> </p>
 						<div className="ui content">
-							<button type="button" className="ui icon blue button " onClick={this.drawBegin}>
-							Next
-							</button>
 						</div>
 					</div>
 				</div>
@@ -72,10 +92,15 @@ var GiftList = React.createClass({
 		this.props.removeNode(nodeId);
 		return;
 	},
+	addBackdoor: function (backDoorData){
+
+		this.props.addBackdoor(backDoorData);
+		return;
+	},
 	render: function() {
 		var listNodes = this.props.data.map(function (listItem) {
 			return (
-				<GiftItem key={listItem.id} nodeId={listItem.id} GiftName={listItem.GiftName} removeNode={this.removeNode} />
+				<GiftItem key={listItem.id} nodeId={listItem.id} GiftName={listItem.GiftName} removeNode={this.removeNode} addBackdoor={this.addBackdoor} />
 			);
 		},this);
 		return (
@@ -92,6 +117,14 @@ var GiftItem = React.createClass({
 		this.props.removeNode(this.props.nodeId);
 		return;
 	},
+	addBackdoor:function (event){
+		var backDoorNum = event.target.value;
+		var backDoorData = {"id":this.props.nodeId,"number":backDoorNum};
+		this.props.addBackdoor(backDoorData);
+		console.log(backDoorData);
+		return;
+
+	},
 	updateClass: function () {
 		
 	},
@@ -102,6 +135,9 @@ var GiftItem = React.createClass({
 					<button type="button" className="ui icon button " onClick={this.removeNode}>
 						<i className="remove icon"></i>
 					</button>
+					<div className="ui transparent input">
+						<input type="text" onBlur={this.addBackdoor} placeholder="number" />
+					</div>
 				</div>
 				<div className="ui item"> {this.props.GiftName} </div>
 			</div>
