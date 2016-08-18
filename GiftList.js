@@ -46,8 +46,10 @@ var GiftBox = React.createClass({
 			backDoorList: backDoorList
 		});
 	},
-	handlePlayerList: function(){
-
+	handlePlayerList: function(newPlayerList){
+		this.setState({
+			PlayerList: newPlayerList
+		});
 	},
 	drawBegin: function(){
 		this.setState({
@@ -62,6 +64,8 @@ var GiftBox = React.createClass({
 		}));
 		console.log("BackDoor List:");
 		console.log(this.state.backDoorList);
+		console.log("Giftbox Playerlist");
+		console.log(this.state.PlayerList);
 		var requireNumber = this.state.data.length;
 		return (
 			<div className="ui two column stackable grid" >
@@ -84,7 +88,7 @@ var GiftBox = React.createClass({
 
 				<div className="column" >
 					<div className={this.state.rightColumn}>
-						<PlayerBox  require={requireNumber} data={this.state.data} setplayer={this.handlePlayerList} />
+						<PlayerBox  require={requireNumber} data={this.state.data}  setPlayer={this.handlePlayerList} />
 					</div>
 				</div>
 			</div>
@@ -179,48 +183,91 @@ var PlayerBox = React.createClass({
 	getInitialState: function() {
 		return{
 			PlayerNumber: 0,
-			PlayerList: []
+			PlayerList: getPlayerList(1)
 
 		};
 	},
 	handlePlayerChange : function(event){
 		var newNumber = event.target.value;
+		var newPlayerList = getPlayerList(newNumber);
 		this.setState({PlayerNumber : newNumber,
-					PlayerList: getPlayerList(newNumber)
+					PlayerList: newPlayerList
 		});
+		this.props.setPlayer(newPlayerList);
 
 	},
+	handlePlayer : function(newPlayer){
+		var targetId = newPlayer.id;
+		var targetName = newPlayer.PlayerName;
+		var index = this.state.PlayerList.findIndex(function(data){
+			return data.id == targetId;
+		});
+		var PlayerList = this.state.PlayerList;
+		PlayerList[index].PlayerName = targetName;
+		this.setState({
+			PlayerList: PlayerList
+		});
+	},
 	render: function(){
-		var Players = this.state.PlayerList.map(player, i){
-			return(
-				<div>
-					<div className="ui item" >
-						<div className="right floated content" >
-							<div className="ui small icon input" >
-								<input type="text" onBlur={this.handlePlayerName} placeholder="name" />
-							<i className="users icon"></i>
-							</div>
-
-						</div>
-						<div className="ui item"> {player.id}  {player.PlayerName} </div>
-					</div>
-
-
-		
-				</div>
-			);
-		};
+		console.log("PlayerBox PlayerList:");
+		console.log(this.state.PlayerList);
 		return(
 			<div>
 				<div className="ui small icon input" >
-					<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" />
+					<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" defaultValue={this.state.PlayerNumber} />
 					<i className="users icon"></i>
 				</div>
 				<p> {this.state.PlayerNumber} </p>
-
+				<PlayerList mydata={this.state.PlayerList} setPlayer={this.handlePlayer}  />
 			</div>
 
 		);
+	}
+});
+
+var PlayerList = React.createClass({
+	handlePlayer: function (newPlayer){
+
+		this.props.setPlayer(newPlayer);
+		return;
+	},
+	render: function() {
+		var listNodes = this.props.mydata.map(function (player) {
+			return (
+				<Player key={player.id} nodeId={player.id} playerName={player.PlayerName} handlePlayer={this.handlePlayer} />
+			);
+		},this);
+		return (
+			<div className="ui middle aligned divided list" >
+				{listNodes}
+			</div>
+		);
+	}
+});
+
+var Player = React.createClass({
+	handlePlayer:function (event){
+		var newPlayerName = event.target.value;
+		var newPlayer = {"id":this.props.nodeId,"PlayerName":newPlayerName};
+		this.props.handlePlayer(newPlayer);
+		console.log(newPlayer);
+		return;
+
+	},
+	render: function(){
+		 	return(
+		 		<div>
+		 			<div className="ui item" >
+		 				<div className="right floated content" >
+		 					<div className="ui small icon input" >
+		 						<input type="text" onBlur={this.handlePlayer} placeholder="name" defaultValue={this.props.playerName} />
+		 						<i className="users icon"></i>
+		 					</div>
+						</div>
+						<div className="ui item"> {this.props.nodeId}  {this.props.playerName} </div>
+					</div>
+				</div>
+		 	);
 	}
 });
 
