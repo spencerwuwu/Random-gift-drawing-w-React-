@@ -1,25 +1,24 @@
-
-function doRand(maxNum, backDoor){
-	var exportNum = [];
-	var done = 0;
-	
-	var requireNum = maxNum;
-	
-	while(requireNum > 0){
-		if(done < backDoor.length && backDoor[done] > 0){
-			exportNum.push(backDoor[done]);
+function doRand(maxNum, current, backDoor, finalListIn){
+	var finalList = finalListIn;
+	if(finalList.length == 0){
+		var i = randomInt(1, maxNum);
+		while(backDoor.indexOf(i) >= 0){
+			i = randomInt(1, maxNum);
+		}
+		finalList.push(i);
+	}
+	else{
+		if(backDoor[current] > 0){
+			finalList.push(backDoor[current]);
 		}else{
 			var i = randomInt(1, maxNum);
-			while( exportNum.indexOf(i) >= 0 || backDoor.indexOf(i) >=0){
+			while(finalList.indexOf(i) >= 0 || backDoor.indexOf(i) >= 0){
 				i = randomInt(1, maxNum);
 			}
-			exportNum.push(i);
+			finalList.push(i);
 		}
-		done++;
-		requireNum--;
-
 	}
-	return exportNum;
+	return {"finalList": finalList, "num": i};
 }
 
 function randomInt(min,max)

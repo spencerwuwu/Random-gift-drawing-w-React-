@@ -6,7 +6,7 @@ var GiftBox = React.createClass({
 				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
         		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
         	backDoorList: [],
-        	RandomList: [],
+			PlayerNumber: 0,
         	PlayerList: [],
         	leftColumn: "" ,
         	rightColumn: ""
@@ -51,6 +51,11 @@ var GiftBox = React.createClass({
 			PlayerList: newPlayerList
 		});
 	},
+	handlePlayerNum: function(newNumber){
+		this.setState({
+			PlayerNumber: newNumber
+		})
+	},
 	drawBegin: function(){
 		this.setState({
 			leftColumn: "behind",
@@ -68,7 +73,7 @@ var GiftBox = React.createClass({
 		console.log(this.state.PlayerList);
 		var requireNumber = this.state.data.length;
 		return (
-			<div className="ui two column stackable grid" >
+			<div className="ui three column stackable grid" >
 				<div className="column" >
 					<div className={this.state.leftColumn}>
 						<h2 className="ui header huge dividing">
@@ -88,9 +93,14 @@ var GiftBox = React.createClass({
 
 				<div className="column" >
 					<div className={this.state.rightColumn}>
-						<PlayerBox  require={requireNumber} data={this.state.data}  setPlayer={this.handlePlayerList} />
+						<PlayerBox  require={requireNumber} data={this.state.data}  setPlayer={this.handlePlayerList} setPlayerNum={this.handlePlayerNum} />
 					</div>
 				</div>
+
+				<div className="column">
+					<RandomBox GiftList={this.state.data} PlayerList={this.state.PlayerList} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
+				</div>
+
 			</div>
 		);
 	}
@@ -194,6 +204,7 @@ var PlayerBox = React.createClass({
 					PlayerList: newPlayerList
 		});
 		this.props.setPlayer(newPlayerList);
+		this.props.setPlayerNum(newNumber);
 
 	},
 	handlePlayer : function(newPlayer){
@@ -271,162 +282,104 @@ var Player = React.createClass({
 	}
 });
 
-/*
-var Player = React.createClass({
-	getInitialState: function() {
-		return { 
-			PlayerNumber : 10,
-			requireNumber : 4,
-			PlayerList: [],
-        	leftColumn: "" ,
-        	rightColumn: ""};
+var RandomBox = React.createClass({
+	getInitialState: function(){
+		return {
+			RandomList: [],
+			FinalList: [],
+			current: 0
+		};
 	},
-	handlePlayerChange : function(event){
-		var newNumber = event.target.value;
-		this.setState({PlayerNumber : newNumber});
-	},
-	drawBegin: function(){
+	setFinal: function(item){
 		this.setState({
-			leftColumn: "behind",
-			rightColumn: ""
-		});
+			FinalList: item
+				});
 	},
-	render : function() {
-		var requireNumber = this.props.require;
-		return(
-			<div>
-				<div className={this.state.leftColumn}>
-					<div className="ui small icon input" >
-						<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" />
-						<i className="users icon"></i>
-					</div>
-					<p>number of people: {this.state.PlayerNumber } </p>
-						<p> </p>
-						<div className="ui content">
-							<button type="button" className="ui icon button " onClick={this.drawBegin}>
-							Finish setting
-							</button>
-						</div>
-					</div>
+	setRandom: function(item){
+		this.setState({
+			RandomList: item
+				});
+	},
+	setCurrent: function(item){
+		this.setState({
+			current: item
+				});
+	},
+	render: function(){
+			console.log("current");
+			console.log(this.state.current);
+			console.log("RandomList");
+			console.log(this.state.RandomList);
+			console.log("FinalList");
+			console.log(this.state.FinalList);
+		var GiftList = this.props.GiftList;
+		var RandomList = this.state.RandomList;
+		var FinalList = this.state.FinalList;
+		var listItem = GiftList.map(function(item, i){
+			return(
+			<div className="ui middle aligned divided list">
+		 		<div className="ui item" >
+		 			<div className="right floated content" >
+		 				<p>	{RandomList[i]} </p>
+		 			</div>
+		 		</div>
+		 		<div className="ui item" >
+		 			<p> {item.GiftName} </p>
+		 		</div>
+
 			</div>
-		);
-	}
-});
-
-var RandomNum = React.createClass({
-	getInitialState: function() {
-		return { 
-			current : 0,
-			numberR : doRand(this.props.PlayerNumber),
-			result : [],
-			startClass : "",
-			btnClass : "invisable ",
-			currentGift: 0
-			 };
-	},
-	drawAgain: function(){
-		if(this.state.current >= this.props.PlayerNumber-1){
-			alert('no more people to draw!');
-		}else {
-			this.setState({current : this.state.current+1});
-		}
-	},
-	drawNext: function(){	
-		if(this.state.currentGift < this.props.data.length - 1){
-				var temp = this.state.result;
-				temp.push(this.state.numberR[this.state.current]);
-
-				this.setState({
-					current : this.state.current+1,
-					result: temp,
-					currentGift: this.state.currentGift+1
-				});
-
-			
-		}else{
-				alert('End of drawing!');
-				var temp = this.state.result;
-				temp.push(this.state.numberR[this.state.current]);
-
-				this.setState({
-					result: temp
-				});
-		}
-			
-	},
-	drawReset: function(){
-		this.setState({
-			current : 0,
-			numberR : doRand(this.props.PlayerNumber),
-			result : [],
-			currentGift: 0 });
-	},
-	drawStart:function() {
-
-		var temp1 = this.state.startClass;
-		var temp2 = this.state.btnClass;
-		this.setState({
-			numberR : doRand(this.props.PlayerNumber),
-			startClass : temp2,
-			btnClass : "finalPopout"
-		})
-	},
-	render : function() {
-		var dataList = this.props.data;
-		var resultList = this.state.result;
-		var dataPrintList = dataList.map(function(dataList, i){
-			return( 
-						<div className="ui two column grid item"> 
-							<div className="ui item column">
-								<div className="content"> {dataList.GiftName} </div> 
-							</div>
-							<div className="ui item column">
-								<div className="float right content"> {resultList[i]} </div> 
-							</div>
-						</div>
 			);
 		});
 		return(
-			<div className="ui item">
-				<div className={this.state.startClass}>
-						<button type="button" className="ui icon button" onClick={this.drawStart}>
-							Start
-						</button>
-				</div>
-				<div className={this.state.btnClass}>
-					<div className="ui raised very padded text container segment">
-						<div className="ui raised segment">
-							<h2 className="ui header ">{dataList[this.state.currentGift].GiftName}</h2>
-							<h1 className="ui header huge center aligned dividing"> {this.state.numberR[this.state.current]} </h1>
-							<p>
-								<button type="button" className="ui icon button" onClick={this.drawAgain}>
-									Again
-								</button>
-								<button type="button" className="ui icon button" onClick={this.drawNext}>
-									Next
-								</button>
-								<button type="button" className="ui icon button" onClick={this.drawReset}>
-									Reset
-								</button>
-							</p>
-							<p className="notclear">To restart from the beginning, refresh the page </p> 
-						</div>
-					
+			<div>
+				<RandomBtn GiftList={this.props.GiftList} PlayerList={this.props.PlayerList} FinalList={this.state.FinalList} BackDoorList={this.props.BackDoorList} current={this.state.current} RandomList={this.state.RandomList} setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
 
-						<h2 className="ui header"> Results </h2>
-
-						<div className="ui middle aligned divided list">
-							{dataPrintList}
-
-						</div>
-					</div>
-				</div>
+				<div> {listItem} </div>
 			</div>
-		);
+			);
+
 	}
 });
 
-*/
+var RandomBtn = React.createClass({
+	getInitialState: function(){
+		temp: 0;
+	},
+	drawAgain: function(){
+		var newRandom = doRand(this.props.PlayerList.length, this.props.current, this.state.BackDoorList, this.props.RandomList);
+		this.props.setRandom(newFinal.finalList);
+		this.setState({
+					temp: newFinal.num
+				});
+	},
+	drawNext:function() {
+		var current = this.props.current;
+		this.props.setCurrent = current;
+		var FinalList = this.props.FinalList;
+		FinalList.push(this.state.temp);
+		this.props.setFinal = FinalList; 
+	},
+	render: function(){
+			console.log("current");
+			console.log(this.props.current);
+			console.log("RandomList");
+			console.log(this.props.RandomList);
+			console.log("FinalList");
+			console.log(this.props.FinalList);
+		return(
+			<div>
+						<button type="button" className="ui icon button" onClick={this.drawAgain}>
+							Again
+						</button>
+						<button type="button" className="ui icon button" onClick={this.drawNext}>
+							Next
+						</button>
+			</div>
+			);
+	}
+});
+
+
 
 React.render(
 	<GiftBox />,
