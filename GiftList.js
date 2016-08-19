@@ -6,8 +6,8 @@ var GiftBox = React.createClass({
 				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
         		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
         	backDoorList: [],
-			PlayerNumber: 0,
-        	PlayerList: [],
+			PlayerNumber: 3,
+			PlayerList: getPlayerList(3),
         	leftColumn: "" ,
         	rightColumn: ""
 		};
@@ -93,12 +93,12 @@ var GiftBox = React.createClass({
 
 				<div className="column" >
 					<div className={this.state.rightColumn}>
-						<PlayerBox  require={requireNumber} data={this.state.data}  setPlayer={this.handlePlayerList} setPlayerNum={this.handlePlayerNum} />
+						<PlayerBox  require={requireNumber} data={this.state.data} PlayerList={this.state.PlayerList} setPlayer={this.handlePlayerList} setPlayerNum={this.handlePlayerNum} />
 					</div>
 				</div>
 
 				<div className="column">
-					<RandomBox GiftList={this.state.data} PlayerList={this.state.PlayerList} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
+					<RandomBox GiftList={this.state.data} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
 				</div>
 
 			</div>
@@ -190,19 +190,9 @@ var GiftForm = React.createClass({
 
 
 var PlayerBox = React.createClass({
-	getInitialState: function() {
-		return{
-			PlayerNumber: 0,
-			PlayerList: getPlayerList(1)
-
-		};
-	},
 	handlePlayerChange : function(event){
 		var newNumber = event.target.value;
 		var newPlayerList = getPlayerList(newNumber);
-		this.setState({PlayerNumber : newNumber,
-					PlayerList: newPlayerList
-		});
 		this.props.setPlayer(newPlayerList);
 		this.props.setPlayerNum(newNumber);
 
@@ -210,26 +200,22 @@ var PlayerBox = React.createClass({
 	handlePlayer : function(newPlayer){
 		var targetId = newPlayer.id;
 		var targetName = newPlayer.PlayerName;
-		var index = this.state.PlayerList.findIndex(function(data){
+		var index = this.props.PlayerList.findIndex(function(data){
 			return data.id == targetId;
 		});
-		var PlayerList = this.state.PlayerList;
+		var PlayerList = this.props.PlayerList;
 		PlayerList[index].PlayerName = targetName;
-		this.setState({
-			PlayerList: PlayerList
-		});
+		this.props.setPlayer = PlayerList;
 	},
 	render: function(){
-		console.log("PlayerBox PlayerList:");
-		console.log(this.state.PlayerList);
 		return(
 			<div>
 				<div className="ui small icon input" >
-					<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" defaultValue={this.state.PlayerNumber} />
+					<input type="text" onBlur={this.handlePlayerChange} placeholder="input number, default 10" defaultValue={this.props.PlayerNumber} />
 					<i className="users icon"></i>
 				</div>
-				<p> {this.state.PlayerNumber} </p>
-				<PlayerList mydata={this.state.PlayerList} setPlayer={this.handlePlayer}  />
+				<p> {this.props.PlayerNumber} </p>
+				<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
 			</div>
 
 		);
@@ -285,33 +271,35 @@ var Player = React.createClass({
 var RandomBox = React.createClass({
 	getInitialState: function(){
 		return {
-			RandomList: [],
-			FinalList: [],
-			current: 0
+				RandomList:[],
+				FinalList:[],
+				current:0
 		};
 	},
-	setFinal: function(item){
+	handleFinal: function(item){
 		this.setState({
 			FinalList: item
 				});
 	},
-	setRandom: function(item){
+	handleRandom: function(item){
 		this.setState({
 			RandomList: item
 				});
 	},
-	setCurrent: function(item){
+	handleCurrent: function(item){
 		this.setState({
 			current: item
 				});
 	},
 	render: function(){
-			console.log("current");
+			console.log("RandomBox current");
 			console.log(this.state.current);
-			console.log("RandomList");
+			console.log("RandomBox RandomList");
 			console.log(this.state.RandomList);
-			console.log("FinalList");
+			console.log("RandomBox FinalList");
 			console.log(this.state.FinalList);
+			console.log("RandomBox PlayerList");
+			console.log(this.props.PlayerList);
 		var GiftList = this.props.GiftList;
 		var RandomList = this.state.RandomList;
 		var FinalList = this.state.FinalList;
@@ -320,7 +308,7 @@ var RandomBox = React.createClass({
 			<div className="ui middle aligned divided list">
 		 		<div className="ui item" >
 		 			<div className="right floated content" >
-		 				<p>	{RandomList[i]} </p>
+		 				<p>	{FinalList[i]} </p>
 		 			</div>
 		 		</div>
 		 		<div className="ui item" >
@@ -332,7 +320,7 @@ var RandomBox = React.createClass({
 		});
 		return(
 			<div>
-				<RandomBtn GiftList={this.props.GiftList} PlayerList={this.props.PlayerList} FinalList={this.state.FinalList} BackDoorList={this.props.BackDoorList} current={this.state.current} RandomList={this.state.RandomList} setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
+				<RandomBtn RandomList={this.state.RandomList} FinalList={this.state.FinalList} current={this.state.current} BackDoorList={this.props.BackDoorList} PlayerList={this.props.PlayerList} setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
 
 				<div> {listItem} </div>
 			</div>
@@ -343,28 +331,34 @@ var RandomBox = React.createClass({
 
 var RandomBtn = React.createClass({
 	getInitialState: function(){
-		temp: 0;
+		return{
+
+			temp: 0
+		};
 	},
 	drawAgain: function(){
-		var newRandom = doRand(this.props.PlayerList.length, this.props.current, this.state.BackDoorList, this.props.RandomList);
-		this.props.setRandom(newFinal.finalList);
+		var newRandom = doRand(this.props.PlayerList.length, this.props.current, this.props.BackDoorList, this.props.RandomList);
+		this.props.setRandom(newRandom.finalList);
 		this.setState({
-					temp: newFinal.num
+					temp: newRandom.num
 				});
 	},
 	drawNext:function() {
 		var current = this.props.current;
-		this.props.setCurrent = current;
+		this.props.setCurrent(current+1);
 		var FinalList = this.props.FinalList;
 		FinalList.push(this.state.temp);
-		this.props.setFinal = FinalList; 
+		this.props.setFinal(FinalList); 
+
 	},
 	render: function(){
-			console.log("current");
+			console.log("RandomBtn BackDoorList");
+			console.log(this.props.BackDoorList);
+			console.log("RandomBtn current");
 			console.log(this.props.current);
-			console.log("RandomList");
+			console.log("RandomBtn RandomList");
 			console.log(this.props.RandomList);
-			console.log("FinalList");
+			console.log("RandomBtn FinalList");
 			console.log(this.props.FinalList);
 		return(
 			<div>

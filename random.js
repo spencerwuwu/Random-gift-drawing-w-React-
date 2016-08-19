@@ -1,4 +1,11 @@
-function doRand(maxNum, current, backDoor, finalListIn){
+function doRand(maxNum, current, backDoorIn, finalListIn){
+	var j = 0;
+	var backDoor = [];
+	while(j<=backDoorIn.length){
+		backDoor.push((backDoorIn[j] != -1) ? parseInt(backDoorIn[j]) : -1);
+		j++;
+	}
+	
 	var finalList = finalListIn;
 	if(finalList.length == 0){
 		var i = randomInt(1, maxNum);
