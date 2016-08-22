@@ -11,7 +11,7 @@ var GiftBox = React.createClass({
         	leftColumn: "" ,
         	rightColumn: "",
         	BDstate: "invisable",
-        	finalState: "finalPopout invisable"
+        	RandomBoxState: "invisable"
 		};
 	},
 	generateId: function () {
@@ -71,6 +71,11 @@ var GiftBox = React.createClass({
 		});
 
 	},
+	setRandomBoxState: function(item){
+		this.setState({
+			RandomBoxState: item
+		})
+	},
 	render: function() {
 		console.log("Gift List:");
 		console.log(this.state.data.map(function(item){
@@ -103,12 +108,12 @@ var GiftBox = React.createClass({
 
 					<div className="column" >
 						<div className={this.state.rightColumn}>
-							<PlayerBox  require={requireNumber} data={this.state.data} PlayerList={this.state.PlayerList} setPlayer={this.handlePlayerList} setPlayerNum={this.handlePlayerNum} />
+							<PlayerBox  require={requireNumber} data={this.state.data} RandomBoxState={this.setRandomBoxState} PlayerList={this.state.PlayerList} setPlayer={this.handlePlayerList} setPlayerNum={this.handlePlayerNum} />
 						</div>
 					</div>
 
 				</div>
-				<div className="finalPopout">
+				<div className={this.state.RandomBoxState}>
 					<div className="ui raised  container segment">
 						<RandomBox GiftList={this.state.data} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
 					</div>
@@ -232,6 +237,9 @@ var PlayerBox = React.createClass({
 			ListState: state
 		});
 	},
+	startDrawing: function(){
+		this.props.RandomBoxState("finalPopout");
+	},
 	render: function(){
 		return(
 			<div>
@@ -244,10 +252,21 @@ var PlayerBox = React.createClass({
 					<i className="users blue icon"></i>
 				</div>
 				<p> {this.props.PlayerNumber} </p>
-				<div className="ui item">
-								<button type="button" className="ui icon button" onClick={this.handleListstate}>
-									Edit PlayerName
-								</button>
+				<div className="ui two column grid">
+					<div className="column">
+						<div className="ui item">
+										<button type="button" className="ui icon button" onClick={this.handleListstate}>
+											Edit PlayerName<i className="plus icon"></i>
+										</button>
+						</div>
+					</div>
+					<div className="column">
+						<div className="ui item right floated">
+										<button type="button" className="ui icon button" onClick={this.startDrawing}>
+											Start Drawing
+										</button>
+						</div>
+					</div>
 				</div>
 				<div className={this.state.ListState}>
 					<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
