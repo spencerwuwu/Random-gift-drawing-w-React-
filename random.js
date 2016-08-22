@@ -1,6 +1,7 @@
 function doRand(maxNum, current, backDoorIn, finalListIn){
 	var j = 0;
 	var backDoor = [];
+	var i = 0;
 	while(j<=backDoorIn.length){
 		backDoor.push((backDoorIn[j] != -1) ? parseInt(backDoorIn[j]) : -1);
 		j++;
@@ -8,17 +9,23 @@ function doRand(maxNum, current, backDoorIn, finalListIn){
 	
 	var finalList = finalListIn;
 	if(finalList.length == 0){
-		var i = randomInt(1, maxNum);
-		while(backDoor.indexOf(i) >= 0){
+		if(backDoor[current] > 0){
+			finalList.push(backDoor[current]);
+			i = backDoor[current];
+		}else{
 			i = randomInt(1, maxNum);
+			while(backDoor.indexOf(i) >= 0){
+				i = randomInt(1, maxNum);
+			}
+			finalList.push(i);
 		}
-		finalList.push(i);
 	}
 	else{
 		if(backDoor[current] > 0){
 			finalList.push(backDoor[current]);
+			i = backDoor[current];
 		}else{
-			var i = randomInt(1, maxNum);
+			i = randomInt(1, maxNum);
 			while(finalList.indexOf(i) >= 0 || backDoor.indexOf(i) >= 0){
 				i = randomInt(1, maxNum);
 			}

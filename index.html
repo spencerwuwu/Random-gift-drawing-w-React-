@@ -9,15 +9,19 @@
     	<style type="text/css">
     		.invisable{
     			display: none;
+                padding: auto;
+                margin: auto;
     		}
     		.behind{
     			opacity: 0.1;
     		}
     		.notclear{
-    			opacity: 0.6;
+    			opacity: 0.4z;
+                color: #0E6EB8;
     		}
     		.finalPopout{
     			position: fixed;
+                padding-top: 20px;
     			top: 0;
     			left: 0;
     			width: 100%;
@@ -26,8 +30,9 @@
                 z-index: 10;
                 overflow: auto;
     		}
-    	</style>
 
+    	</style>
+        <link rel="stylesheet" type="text/css" href="spinner.css">
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/semantic-ui/2.2.2/semantic.min.css">
 
     
@@ -44,14 +49,10 @@
 			<div class="todo ui raised  container segment"  id="todo"></div>
 
 
-
-
     <script src='https://fb.me/react-0.13.1.js'></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
     <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
     <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
-		<script >
-		</script>
 		<script type="text/babel" src="GiftList.js"></script>
 
 	</body>
