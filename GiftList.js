@@ -6,8 +6,8 @@ var GiftBox = React.createClass({
 				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
         		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
         	backDoorList: [],
-			PlayerNumber: 3,
-			PlayerList: getPlayerList(3),
+			PlayerNumber: 10,
+			PlayerList: getPlayerList(10),
         	leftColumn: "" ,
         	rightColumn: "",
         	BDstate: "invisable",
@@ -93,13 +93,14 @@ var GiftBox = React.createClass({
 								<div className="content">
 								<i className="gift icon" onClick={this.activateBD} ></i>Gifts</div>
 							</h2>
-							<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} addBackdoor={this.handleAddBackdoor} BDstate={this.state.BDstate} />
 							<GiftForm onGiftNameSubmit={this.handleSubmit} />
 							<p> </p>
 							<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
 							<p> </p>
 							<div className="ui content">
-							</div>
+							</div>							
+							<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} addBackdoor={this.handleAddBackdoor} BDstate={this.state.BDstate} />
+
 						</div>
 					</div>
 
@@ -241,10 +242,11 @@ var PlayerBox = React.createClass({
 	render: function(){
 		return(
 			<div>
-						<h2 className="ui blue header huge dividing">
-							<div className="content">
-							<i className="users icon"></i>Players</div>
-						</h2>
+				<h2 className="ui blue header huge dividing">
+					<div className="content">
+					<i className="users icon"></i>Players</div>
+				</h2>
+				<div className="ui blue header" >Number of player:</div>
 				<div className="ui left icon input" >
 					<input type="text" onBlur={this.handlePlayerChange} placeholder="Player number, default 10" defaultValue={this.props.PlayerNumber} />
 					<i className="users blue icon"></i>
@@ -308,7 +310,7 @@ var Player = React.createClass({
 	render: function(){
 		 	return(
 		 		<div className="ui item">
-						<div className="ui item"><h5>No : {this.props.nodeId}  -  {this.props.playerName} </h5></div>
+						<div className="ui item"><h5>No : {this.props.nodeId}</h5></div>
 		 				<div className="ui left icon input" >
 		 					<input type="text" onBlur={this.handlePlayer} placeholder="name" defaultValue={this.props.playerName} />
 		 					<i className="user icon"></i>

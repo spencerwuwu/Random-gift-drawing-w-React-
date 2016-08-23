@@ -5,8 +5,16 @@
     	<meta charset="UTF-8" />
 		
 		<title>random</title>
+        
+        <link rel="stylesheet" type="text/css" href="spinner.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/semantic-ui/2.2.2/semantic.min.css">
 
     	<style type="text/css">
+
+            h1,h2,h3,h4,a,p{
+                font-family: Arial, "文泉驛正黑", "WenQuanYi Zen Hei", "儷黑 Pro", "LiHei Pro", "微軟正黑體", "Microsoft JhengHei", "標楷體", DFKai-SB, sans-serif;
+
+            }
     		.invisable{
     			display: none;
                 padding: auto;
@@ -32,8 +40,6 @@
     		}
 
     	</style>
-        <link rel="stylesheet" type="text/css" href="spinner.css">
-		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/semantic-ui/2.2.2/semantic.min.css">
 
     
 
@@ -47,11 +53,14 @@
 
 		<div width="100%" margin="30px"></div>
 			<div class="todo ui raised  container segment"  id="todo"></div>
+            <div class="ui raised  container segment">
+                <p>This is a simple gift drawing app created with ReactJs. Set your gift list and the number of people to draw. You can set each player's name by clicking the 'Edit PlayerName' button.</p> 
+                <p>Click the 'gift icon' in the title of the first column to activate back-door system. You can assign each gift to a specific player by entering the player's No. .Gifts that not assigned with back-door number will still be random  when drawing. Click the 'gift icon' again to hide the back-door list after finishing setting. Enjoy!</p>
+            </div>
 
 
     <script src='https://fb.me/react-0.13.1.js'></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-    <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
     <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
 		<script type="text/babel" src="GiftList.js"></script>
 
