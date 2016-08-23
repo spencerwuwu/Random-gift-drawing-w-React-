@@ -81,8 +81,6 @@ var GiftBox = React.createClass({
 		console.log(this.state.data.map(function(item){
 			return item;
 		}));
-		console.log("BackDoor List:");
-		console.log(this.state.backDoorList);
 		console.log("Giftbox Playerlist");
 		console.log(this.state.PlayerList);
 		var requireNumber = this.state.data.length;
@@ -256,14 +254,14 @@ var PlayerBox = React.createClass({
 					<div className="column">
 						<div className="ui item">
 										<button type="button" className="ui icon button" onClick={this.handleListstate}>
-											Edit PlayerName<i className="plus icon"></i>
+											Edit PlayerName <i className="edit icon"></i>
 										</button>
 						</div>
 					</div>
 					<div className="column">
 						<div className="ui item right floated">
-										<button type="button" className="ui icon button" onClick={this.startDrawing}>
-											Start Drawing
+										<button type="button" className="ui blue icon button" onClick={this.startDrawing}>
+											Start Drawing <i className="chevron circle right icon"></i>
 										</button>
 						</div>
 					</div>
@@ -302,6 +300,7 @@ var Player = React.createClass({
 		var newPlayerName = event.target.value;
 		var newPlayer = {"id":this.props.nodeId,"PlayerName":newPlayerName};
 		this.props.handlePlayer(newPlayer);
+		console.log("newPlayer");
 		console.log(newPlayer);
 		return;
 
@@ -357,12 +356,15 @@ var RandomBox = React.createClass({
 		var PlayerList = this.props.PlayerList;
 		var listItem = FinalList.map(function(item, i){
 			return(
-		 		<div className="ui item two column grid" >
+		 		<div className="ui item three column grid" >
 			 		<div className="column" >
-			 			<h2> {GiftList[i].GiftName} </h2>
+			 			<h3> {GiftList[i].GiftName} </h3>
 			 		</div>
 		 			<div className="column" >
-		 				<h2> {item.id} {item.PlayerName} </h2>
+		 				<h3> {item.id} </h3>
+		 			</div>
+		 			<div className="column" >
+		 				<h3> {item.PlayerName} </h3>
 		 			</div>
 		 		</div>
 
@@ -374,7 +376,7 @@ var RandomBox = React.createClass({
 					<RandomBtn RandomList={this.state.RandomList} GiftList={GiftList} FinalList={this.state.FinalList} current={this.state.current} BackDoorList={this.props.BackDoorList} PlayerList={this.props.PlayerList} setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
 				</div>
 				<div className="column">
-					<h1 className="ui blue header huge center aligned dividing"> Final List </h1>
+					<h1 className="ui blue header huge center aligned dividing"> Results </h1>
 					<br />
 					<div className="ui middle aligned divided list"> {listItem} </div>
 				</div>
@@ -434,14 +436,6 @@ var RandomBtn = React.createClass({
 
 	},
 	render: function(){
-			console.log("RandomBtn BackDoorList");
-			console.log(this.props.BackDoorList);
-			console.log("RandomBtn current");
-			console.log(this.props.current);
-			console.log("RandomBtn RandomList");
-			console.log(this.props.RandomList);
-			console.log("RandomBtn FinalList");
-			console.log(this.props.FinalList);
 			var item = this.state.item;
 		return(
 			<div>
@@ -452,7 +446,16 @@ var RandomBtn = React.createClass({
 					<div className={this.state.finalAnimate} >
 							<div className="spinner spinner-1"></div>
 					</div>
-					<h1 className="ui header huge center aligned dividing"> {item.id} {item.PlayerName} </h1>
+					<h1 className="ui header huge center aligned dividing">
+						<div className="ui two column grid">
+							<div className="column">
+							 {item.id}
+							 </div>
+							 <div className="column">
+							 	{item.PlayerName}
+							 </div>
+						</div>
+					 </h1>
 
 					<div className="ui two column grid">
 						<div className="column">

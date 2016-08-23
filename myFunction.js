@@ -44,7 +44,7 @@ function getPlayerList(num){
 	var list = [];
 	var index = 1;
 	while (num != 0){
-		list.push({"id":index, "PlayerName":""});
+		list.push({"id":index, "PlayerName":"-"});
 		index++;
 		num--;
 	}
