@@ -3,36 +3,60 @@
   <head>
     <meta charset="UTF-8">
     <title>Gift random drawing w/ ReactJs</title>
-    <script>
-
-function doRand(maxNum){
-	var exportNum = [];
-	var done = 0;
+      <script>
+function doRand(maxNum, current, backDoorIn, finalListIn){
+	var j = 0;
+	var backDoor = [];
+	var i = 0;
+	while(j<=backDoorIn.length){
+		backDoor.push((backDoorIn[j] != -1) ? parseInt(backDoorIn[j]) : -1);
+		j++;
+	}
 	
-	var requireNum = maxNum;
-	
-	while(requireNum > 0){
-		if(done == 0){
-			exportNum.push(randomInt(1, maxNum));
-			requireNum--;
-			done++;
+	var finalList = finalListIn;
+	if(finalList.length == 0){
+		if(backDoor[current] > 0){
+			finalList.push(backDoor[current]);
+			i = backDoor[current];
 		}else{
-			var i = randomInt(1, maxNum);
-			while( exportNum.indexOf(i) >= 0){
+			i = randomInt(1, maxNum);
+			while(backDoor.indexOf(i) >= 0){
 				i = randomInt(1, maxNum);
 			}
-			exportNum.push(i);
-			requireNum--;
-			done++;
+			finalList.push(i);
 		}
 	}
-	return exportNum;
+	else{
+		if(backDoor[current] > 0){
+			finalList.push(backDoor[current]);
+			i = backDoor[current];
+		}else{
+			i = randomInt(1, maxNum);
+			while(finalList.indexOf(i) >= 0 || backDoor.indexOf(i) >= 0){
+				i = randomInt(1, maxNum);
+			}
+			finalList.push(i);
+		}
+	}
+	return {"finalList": finalList, "num": i};
 }
 
 function randomInt(min,max)
 {
     return Math.floor(Math.random()*(max-min+1)+min);
 }
+
+function getPlayerList(num){
+	var list = [];
+	var index = 1;
+	while (num != 0){
+		list.push({"id":index, "PlayerName":"-"});
+		index++;
+		num--;
+	}
+	return list;
+}
+
 
 
 </script>
@@ -53,7 +77,7 @@ function randomInt(min,max)
 http://codepen.io/philmayfield/pen/MwRgyN
 todolist into a random drawing design-->
 <div width="100%" margin="30px"></div>
-<div class="todo ui raised very padded text container segment" id="todo">
+<div class="todo ui raised container segment" id="todo">
 
 </div>
     <script src='https://fb.me/react-0.13.1.min.js'></script>
@@ -64,7 +88,7 @@ todolist into a random drawing design-->
     <div class="ui center aligned container " z-index="20">
 
   		<div class="ui small basic icon buttons" >
-  			<a href="http://codepen.io/spencerwu85/pen/yJGVGW" target="blank"><button data-tooltip="View on Codepen" data-inverted="" class="ui button"><h2><i class="codepen icon"></i></h2></button></a>
+  			<a href="http://codepen.io/spencerwu85/pen/wWbPOm?editors=0100" target="blank"><button data-tooltip="View on Codepen" data-inverted="" class="ui button"><h2><i class="codepen icon"></i></h2></button></a>
 	 		 <a href="https://github.com/iiia/Random-gift-drawing-w-React-" target="blank"><button data-tooltip="View on Github" data-inverted="" class="ui button"><h2><i class="github icon"></i></h2></button></a>
 	  
 		</div>  
