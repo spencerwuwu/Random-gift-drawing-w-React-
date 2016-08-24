@@ -76,6 +76,11 @@ var GiftBox = React.createClass({
 			RandomBoxState: item
 		})
 	},
+	handleRestart: function(item){
+		this.setState({
+			RandomBoxState: item
+		})
+	},
 	render: function() {
 		console.log("Gift List:");
 		console.log(this.state.data.map(function(item){
@@ -114,7 +119,7 @@ var GiftBox = React.createClass({
 				</div>
 				<div className={this.state.RandomBoxState}>
 					<div className="ui raised  container segment">
-						<RandomBox GiftList={this.state.data} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
+						<RandomBox GiftList={this.state.data} handleRestart={this.handleRestart} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
 					</div>
 				</div>
 			</div>
@@ -343,6 +348,14 @@ var RandomBox = React.createClass({
 			current: item
 				});
 	},
+	handleRestart: function(){
+		this.props.handleRestart("invisable");
+		this.setState({
+			current: 0,
+			RandomList:[],
+			FinalList:[],
+		});
+	},
 	render: function(){
 			console.log("RandomBox current");
 			console.log(this.state.current);
@@ -372,16 +385,26 @@ var RandomBox = React.createClass({
 
 			);
 		});
-		return(
-			<div className="ui two column stackable grid">
-				<div className="column">
-					<RandomBtn RandomList={this.state.RandomList} GiftList={GiftList} FinalList={this.state.FinalList} current={this.state.current} BackDoorList={this.props.BackDoorList} PlayerList={this.props.PlayerList} setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
-				</div>
-				<div className="column">
-					<h1 className="ui blue header huge center aligned dividing"> Results </h1>
-					<br />
-					<div className="ui middle aligned divided list"> {listItem} </div>
-				</div>
+		return(	
+			<div>
+					<div className="ui two column grid">
+						<div className="column"> <p> </p></div>
+						<div className="column">
+								<button className="ui basic right floated button" onClick={this.handleRestart}>
+									<i className="remove icon"></i>
+								</button>
+						</div>
+					</div>
+					<div className="ui two column stackable grid">
+						<div className="column">
+							<RandomBtn RandomList={this.state.RandomList} GiftList={GiftList} FinalList={this.state.FinalList} current={this.state.current} BackDoorList={this.props.BackDoorList} PlayerList={this.props.PlayerList}  setCurrent={this.handleCurrent} setFinal={this.handleFinal} setRandom={this.handleRandom} />
+						</div>
+						<div className="column">
+							<h1 className="ui blue header huge center aligned dividing"> Results </h1>
+							<br />
+							<div className="ui middle aligned divided list"> {listItem} </div>
+						</div>
+					</div>
 			</div>
 			);
 
@@ -395,7 +418,8 @@ var RandomBtn = React.createClass({
 			AbtnState: "",
 			temp: 0,
 			item: {},
-			finalAnimate: "finalAnimate elementFadeOut"
+			finalAnimate: "finalAnimate elementFadeOut",
+			displayState: "invisable"
 		};
 	},
 	drawAgain: function(){
@@ -408,7 +432,8 @@ var RandomBtn = React.createClass({
 					btnState: "",
 					temp: newRandom.num,
 					item: item,
-					finalAnimate: finalAnimate
+					finalAnimate: finalAnimate,
+					displayState: ""
 				});
 	},
 	drawNext:function() {
@@ -420,18 +445,18 @@ var RandomBtn = React.createClass({
 		var item = this.props.PlayerList[index];
 		FinalList.push(item);
 		this.props.setFinal(FinalList); 
-
 		if(current == this.props.GiftList.length - 1){
-			alert("End of Draw!!");
 			this.setState({
 				AbtnState: "invisable",
-				btnState: "invisable"
+				btnState: "invisable",
+				displayState: "invisable"
 			});
 		}
 		else{
 			this.props.setCurrent(current+1);
 			this.setState({
-				btnState: "invisable"
+				btnState: "invisable",
+				displayState: "invisable"
 			});
 		}
 		
@@ -449,13 +474,15 @@ var RandomBtn = React.createClass({
 							<div className="spinner spinner-1"></div>
 					</div>
 					<h1 className="ui header huge center aligned dividing">
-						<div className="ui two column grid">
-							<div className="column">
-							 {item.id}
-							 </div>
-							 <div className="column">
-							 	{item.PlayerName}
-							 </div>
+						<div className={this.state.displayState}>
+							<div className="ui two column grid">
+								<div className="column">
+								 {item.id}
+								 </div>
+								 <div className="column">
+								 	{item.PlayerName}
+								 </div>
+							</div>
 						</div>
 					 </h1>
 
