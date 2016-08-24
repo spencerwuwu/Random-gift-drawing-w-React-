@@ -1,13 +1,18 @@
 "use strict";
 
-var TodoBox = React.createClass({
-	displayName: "TodoBox",
+var GiftBox = React.createClass({
+	displayName: "GiftBox",
 
 	getInitialState: function getInitialState() {
 		return {
-			data: [{ "id": "00001", "task": "Gift1" }, { "id": "00002", "task": "Gift2" }, { "id": "00003", "task": "Gift3" }],
+			data: [{ "id": "00001", "GiftName": "Gift1", "BackDoor": -1 }, { "id": "00002", "GiftName": "Gift2", "BackDoor": -1 }, { "id": "00003", "GiftName": "Gift3", "BackDoor": -1 }],
+			backDoorList: [],
+			PlayerNumber: 10,
+			PlayerList: getPlayerList(10),
 			leftColumn: "",
-			rightColumn: "behind"
+			rightColumn: "",
+			BDstate: "invisable",
+			RandomBoxState: "invisable"
 		};
 	},
 	generateId: function generateId() {
@@ -21,11 +26,38 @@ var TodoBox = React.createClass({
 		this.setState({ data: data });
 		return;
 	},
-	handleSubmit: function handleSubmit(task) {
+	handleSubmit: function handleSubmit(GiftName) {
 		var data = this.state.data;
 		var id = this.generateId().toString();
-		data = data.concat([{ id: id, task: task }]);
+		var num = -1;
+		data = data.concat([{ id: id, GiftName: GiftName, num: num }]);
 		this.setState({ data: data });
+	},
+	handleAddBackdoor: function handleAddBackdoor(backDoorData) {
+		var targetId = backDoorData.id;
+		var backDoorNum = backDoorData.number;
+		var index = this.state.data.findIndex(function (data) {
+			return data.id == targetId;
+		});
+		var data = this.state.data;
+		data[index].BackDoor = backDoorNum;
+		var backDoorList = data.map(function (item) {
+			return item.BackDoor;
+		});
+		this.setState({
+			data: data,
+			backDoorList: backDoorList
+		});
+	},
+	handlePlayerList: function handlePlayerList(newPlayerList) {
+		this.setState({
+			PlayerList: newPlayerList
+		});
+	},
+	handlePlayerNum: function handlePlayerNum(newNumber) {
+		this.setState({
+			PlayerNumber: newNumber
+		});
 	},
 	drawBegin: function drawBegin() {
 		this.setState({
@@ -33,85 +65,116 @@ var TodoBox = React.createClass({
 			rightColumn: ""
 		});
 	},
+	activateBD: function activateBD() {
+		var BDstate = this.state.BDstate == "invisable" ? "" : "invisable";
+		this.setState({
+			BDstate: BDstate
+		});
+	},
+	setRandomBoxState: function setRandomBoxState(item) {
+		this.setState({
+			RandomBoxState: item
+		});
+	},
+	handleRestart: function handleRestart(item) {
+		this.setState({
+			RandomBoxState: item
+		});
+	},
 	render: function render() {
-
+		console.log("Gift List:");
+		console.log(this.state.data.map(function (item) {
+			return item;
+		}));
+		console.log("Giftbox Playerlist");
+		console.log(this.state.PlayerList);
 		var requireNumber = this.state.data.length;
 		return React.createElement(
 			"div",
-			{ className: "ui two column stackable grid" },
+			null,
 			React.createElement(
 				"div",
-				{ className: "column" },
+				{ className: "ui two column stackable grid" },
 				React.createElement(
 					"div",
-					{ className: this.state.leftColumn },
-					React.createElement(
-						"h2",
-						{ className: "ui header huge dividing" },
-						React.createElement(
-							"div",
-							{ className: "content" },
-							React.createElement("i", { className: "gift icon" }),
-							"Gifts"
-						)
-					),
-					React.createElement(TodoList, { data: this.state.data, removeNode: this.handleNodeRemoval }),
-					React.createElement(TodoForm, { onTaskSubmit: this.handleSubmit }),
-					React.createElement(
-						"p",
-						null,
-						" "
-					),
+					{ className: "column" },
 					React.createElement(
 						"div",
-						{ className: "notclear" },
-						" ",
+						{ className: this.state.leftColumn },
+						React.createElement(
+							"h2",
+							{ className: "ui blue header huge dividing" },
+							React.createElement(
+								"div",
+								{ className: "content" },
+								React.createElement("i", { className: "gift icon", onClick: this.activateBD }),
+								"Gifts"
+							)
+						),
+						React.createElement(GiftForm, { onGiftNameSubmit: this.handleSubmit }),
 						React.createElement(
 							"p",
 							null,
-							" Press Enter to add new gift to list"
+							" "
 						),
-						" "
-					),
-					React.createElement(
-						"p",
-						null,
-						" "
-					),
+						React.createElement(
+							"div",
+							{ className: "notclear" },
+							" ",
+							React.createElement(
+								"p",
+								null,
+								" Press Enter to add new gift to list"
+							),
+							" "
+						),
+						React.createElement(
+							"p",
+							null,
+							" "
+						),
+						React.createElement("div", { className: "ui content" }),
+						React.createElement(GiftList, { data: this.state.data, removeNode: this.handleNodeRemoval, addBackdoor: this.handleAddBackdoor, BDstate: this.state.BDstate })
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "column" },
 					React.createElement(
 						"div",
-						{ className: "ui content" },
-						React.createElement(
-							"button",
-							{ type: "button", className: "ui icon button ", onClick: this.drawBegin },
-							"Next"
-						)
+						{ className: this.state.rightColumn },
+						React.createElement(PlayerBox, { require: requireNumber, data: this.state.data, RandomBoxState: this.setRandomBoxState, PlayerList: this.state.PlayerList, setPlayer: this.handlePlayerList, setPlayerNum: this.handlePlayerNum })
 					)
 				)
 			),
 			React.createElement(
 				"div",
-				{ className: "column" },
+				{ className: this.state.RandomBoxState },
 				React.createElement(
 					"div",
-					{ className: this.state.rightColumn },
-					React.createElement(DisplayNum, { require: requireNumber, data: this.state.data })
+					{ className: "ui raised  container segment" },
+					React.createElement(RandomBox, { GiftList: this.state.data, handleRestart: this.handleRestart, PlayerList: this.state.PlayerList, PlayerNumber: this.state.PlayerNumber, BackDoorList: this.state.backDoorList, PlayerNumber: this.state.PlayerNumber })
 				)
 			)
 		);
 	}
 });
 
-var TodoList = React.createClass({
-	displayName: "TodoList",
+var GiftList = React.createClass({
+	displayName: "GiftList",
 
 	removeNode: function removeNode(nodeId) {
 		this.props.removeNode(nodeId);
 		return;
 	},
+	addBackdoor: function addBackdoor(backDoorData) {
+
+		this.props.addBackdoor(backDoorData);
+		return;
+	},
 	render: function render() {
 		var listNodes = this.props.data.map(function (listItem) {
-			return React.createElement(TodoItem, { key: listItem.id, nodeId: listItem.id, task: listItem.task, removeNode: this.removeNode });
+			return React.createElement(GiftItem, { key: listItem.id, nodeId: listItem.id, GiftName: listItem.GiftName, removeNode: this.removeNode, addBackdoor: this.addBackdoor, BDstate: this.props.BDstate });
 		}, this);
 		return React.createElement(
 			"div",
@@ -121,12 +184,19 @@ var TodoList = React.createClass({
 	}
 });
 
-var TodoItem = React.createClass({
-	displayName: "TodoItem",
+var GiftItem = React.createClass({
+	displayName: "GiftItem",
 
 	removeNode: function removeNode(e) {
 		e.preventDefault();
 		this.props.removeNode(this.props.nodeId);
+		return;
+	},
+	addBackdoor: function addBackdoor(event) {
+		var backDoorNum = event.target.value;
+		var backDoorData = { "id": this.props.nodeId, "number": backDoorNum };
+		this.props.addBackdoor(backDoorData);
+		console.log(backDoorData);
 		return;
 	},
 	updateClass: function updateClass() {},
@@ -141,30 +211,39 @@ var TodoItem = React.createClass({
 					"button",
 					{ type: "button", className: "ui icon button ", onClick: this.removeNode },
 					React.createElement("i", { className: "remove icon" })
+				),
+				React.createElement(
+					"div",
+					{ className: this.props.BDstate },
+					React.createElement(
+						"div",
+						{ className: "ui transparent input" },
+						React.createElement("input", { type: "text", onBlur: this.addBackdoor, placeholder: "Player no." })
+					)
 				)
 			),
 			React.createElement(
 				"div",
 				{ className: "ui item" },
 				" ",
-				this.props.task,
+				this.props.GiftName,
 				" "
 			)
 		);
 	}
 });
 
-var TodoForm = React.createClass({
-	displayName: "TodoForm",
+var GiftForm = React.createClass({
+	displayName: "GiftForm",
 
 	doSubmit: function doSubmit(e) {
 		e.preventDefault();
-		var task = React.findDOMNode(this.refs.task).value.trim();
-		if (!task) {
+		var GiftName = React.findDOMNode(this.refs.GiftName).value.trim();
+		if (!GiftName) {
 			return;
 		}
-		this.props.onTaskSubmit(task);
-		React.findDOMNode(this.refs.task).value = '';
+		this.props.onGiftNameSubmit(GiftName);
+		React.findDOMNode(this.refs.GiftName).value = '';
 		return;
 	},
 	render: function render() {
@@ -173,167 +252,260 @@ var TodoForm = React.createClass({
 			{ onSubmit: this.doSubmit, className: "ui item container" },
 			React.createElement(
 				"div",
-				{ htmlFor: "task", className: "ui header dividing" },
-				"Add New Gift"
+				{ htmlFor: "GiftName", className: "ui blue header" },
+				"Add New Gift:"
 			),
 			React.createElement(
 				"div",
 				{ className: "ui small icon input" },
-				React.createElement("input", { type: "text", id: "task", ref: "task", className: "", placeholder: "New Gifts" }),
-				React.createElement("i", { className: "plus icon" })
+				React.createElement("input", { type: "text", id: "GiftName", ref: "GiftName", className: "", placeholder: "New Gifts" }),
+				React.createElement("i", { className: "plus blue icon" })
 			)
 		);
 	}
 });
 
-var DisplayNum = React.createClass({
-	displayName: "DisplayNum",
+var PlayerBox = React.createClass({
+	displayName: "PlayerBox",
 
 	getInitialState: function getInitialState() {
 		return {
-			maxNumber: 10,
-			requireNumber: 4,
-			leftColumn: "",
-			rightColumn: "behind" };
+			ListState: "invisable"
+		};
 	},
-	handleMaxChange: function handleMaxChange(event) {
+	handlePlayerChange: function handlePlayerChange(event) {
 		var newNumber = event.target.value;
-		this.setState({ maxNumber: newNumber });
+		var newPlayerList = getPlayerList(newNumber);
+		this.props.setPlayer(newPlayerList);
+		this.props.setPlayerNum(newNumber);
 	},
-	drawBegin: function drawBegin() {
+	handlePlayer: function handlePlayer(newPlayer) {
+		var targetId = newPlayer.id;
+		var targetName = newPlayer.PlayerName;
+		var index = this.props.PlayerList.findIndex(function (data) {
+			return data.id == targetId;
+		});
+		var PlayerList = this.props.PlayerList;
+		PlayerList[index].PlayerName = targetName;
+		this.props.setPlayer = PlayerList;
+	},
+	handleListstate: function handleListstate() {
+		var state = this.state.ListState == "invisable" ? "" : "invisable";
 		this.setState({
-			leftColumn: "behind",
-			rightColumn: ""
+			ListState: state
 		});
 	},
+	startDrawing: function startDrawing() {
+		this.props.RandomBoxState("finalPopout");
+	},
 	render: function render() {
-		var requireNumber = this.props.require;
 		return React.createElement(
 			"div",
 			null,
 			React.createElement(
+				"h2",
+				{ className: "ui blue header huge dividing" },
+				React.createElement(
+					"div",
+					{ className: "content" },
+					React.createElement("i", { className: "users icon" }),
+					"Players"
+				)
+			),
+			React.createElement(
 				"div",
-				{ className: this.state.leftColumn },
+				{ className: "ui blue header" },
+				"Number of player:"
+			),
+			React.createElement(
+				"div",
+				{ className: "ui left icon input" },
+				React.createElement("input", { type: "text", onBlur: this.handlePlayerChange, placeholder: "Player number, default 10", defaultValue: this.props.PlayerNumber }),
+				React.createElement("i", { className: "users blue icon" })
+			),
+			React.createElement(
+				"p",
+				null,
+				" ",
+				this.props.PlayerNumber,
+				" "
+			),
+			React.createElement(
+				"div",
+				{ className: "ui two column grid" },
 				React.createElement(
 					"div",
-					{ className: "ui small icon input" },
-					React.createElement("input", { type: "text", onBlur: this.handleMaxChange, placeholder: "input number, default 10" }),
-					React.createElement("i", { className: "users icon" })
-				),
-				React.createElement(
-					"p",
-					null,
-					"number of people: ",
-					this.state.maxNumber,
-					" "
-				),
-				React.createElement(
-					"p",
-					null,
-					" "
-				),
-				React.createElement(
-					"div",
-					{ className: "ui content" },
+					{ className: "column" },
 					React.createElement(
-						"button",
-						{ type: "button", className: "ui icon button ", onClick: this.drawBegin },
-						"Finish setting"
+						"div",
+						{ className: "ui item" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "ui icon button", onClick: this.handleListstate },
+							"Edit PlayerName ",
+							React.createElement("i", { className: "edit icon" })
+						)
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "column" },
+					React.createElement(
+						"div",
+						{ className: "ui item right floated" },
+						React.createElement(
+							"button",
+							{ type: "button", className: "ui blue icon button", onClick: this.startDrawing },
+							"Start Drawing ",
+							React.createElement("i", { className: "chevron circle right icon" })
+						)
 					)
 				)
 			),
 			React.createElement(
 				"div",
-				{ className: this.state.rightColumn },
-				React.createElement(RandomNum, { maxNumber: this.state.maxNumber, requireNumber: requireNumber, data: this.props.data })
+				{ className: this.state.ListState },
+				React.createElement(PlayerList, { mydata: this.props.PlayerList, setPlayer: this.handlePlayer })
 			)
 		);
 	}
 });
 
-var RandomNum = React.createClass({
-	displayName: "RandomNum",
+var PlayerList = React.createClass({
+	displayName: "PlayerList",
+
+	handlePlayer: function handlePlayer(newPlayer) {
+
+		this.props.setPlayer(newPlayer);
+		return;
+	},
+	render: function render() {
+		var listNodes = this.props.mydata.map(function (player) {
+			return React.createElement(Player, { key: player.id, nodeId: player.id, playerName: player.PlayerName, handlePlayer: this.handlePlayer });
+		}, this);
+		return React.createElement(
+			"div",
+			{ className: "ui middle aligned list" },
+			listNodes
+		);
+	}
+});
+
+var Player = React.createClass({
+	displayName: "Player",
+
+	handlePlayer: function handlePlayer(event) {
+		var newPlayerName = event.target.value;
+		var newPlayer = { "id": this.props.nodeId, "PlayerName": newPlayerName };
+		this.props.handlePlayer(newPlayer);
+		console.log("newPlayer");
+		console.log(newPlayer);
+		return;
+	},
+	render: function render() {
+		return React.createElement(
+			"div",
+			{ className: "ui item" },
+			React.createElement(
+				"div",
+				{ className: "ui item" },
+				React.createElement(
+					"h5",
+					null,
+					"No : ",
+					this.props.nodeId
+				)
+			),
+			React.createElement(
+				"div",
+				{ className: "ui left icon input" },
+				React.createElement("input", { type: "text", onBlur: this.handlePlayer, placeholder: "name", defaultValue: this.props.playerName }),
+				React.createElement("i", { className: "user icon" })
+			)
+		);
+	}
+});
+
+var RandomBox = React.createClass({
+	displayName: "RandomBox",
 
 	getInitialState: function getInitialState() {
 		return {
-			current: 0,
-			numberR: doRand(this.props.maxNumber),
-			result: [],
-			startClass: "",
-			btnClass: "invisable ",
-			currentGift: 0
+			RandomList: [],
+			FinalList: [],
+			current: 0
 		};
 	},
-	drawAgain: function drawAgain() {
-		if (this.state.current >= this.props.maxNumber - 1) {
-			alert('no more people to draw!');
-		} else {
-			this.setState({ current: this.state.current + 1 });
-		}
+	handleFinal: function handleFinal(item) {
+		this.setState({
+			FinalList: item
+		});
 	},
-	drawNext: function drawNext() {
-		if (this.state.currentGift < this.props.data.length - 1) {
-			var temp = this.state.result;
-			temp.push(this.state.numberR[this.state.current]);
-
-			this.setState({
-				current: this.state.current + 1,
-				result: temp,
-				currentGift: this.state.currentGift + 1
-			});
-		} else {
-			alert('End of drawing!');
-			var temp = this.state.result;
-			temp.push(this.state.numberR[this.state.current]);
-
-			this.setState({
-				result: temp
-			});
-		}
+	handleRandom: function handleRandom(item) {
+		this.setState({
+			RandomList: item
+		});
 	},
-	drawReset: function drawReset() {
+	handleCurrent: function handleCurrent(item) {
+		this.setState({
+			current: item
+		});
+	},
+	handleRestart: function handleRestart() {
+		this.props.handleRestart("invisable");
 		this.setState({
 			current: 0,
-			numberR: doRand(this.props.maxNumber),
-			result: [],
-			currentGift: 0 });
-	},
-	drawStart: function drawStart() {
-
-		var temp1 = this.state.startClass;
-		var temp2 = this.state.btnClass;
-		this.setState({
-			numberR: doRand(this.props.maxNumber),
-			startClass: temp2,
-			btnClass: "finalPopout"
+			RandomList: [],
+			FinalList: []
 		});
 	},
 	render: function render() {
-		var dataList = this.props.data;
-		var resultList = this.state.result;
-		var dataPrintList = dataList.map(function (dataList, i) {
+		console.log("RandomBox current");
+		console.log(this.state.current);
+		console.log("RandomBox RandomList");
+		console.log(this.state.RandomList);
+		console.log("RandomBox FinalList");
+		console.log(this.state.FinalList);
+		console.log("RandomBox PlayerList");
+		console.log(this.props.PlayerList);
+		var GiftList = this.props.GiftList;
+		var RandomList = this.state.RandomList;
+		var FinalList = this.state.FinalList;
+		var PlayerList = this.props.PlayerList;
+		var listItem = FinalList.map(function (item, i) {
 			return React.createElement(
 				"div",
-				{ className: "ui two column grid item" },
+				{ className: "ui item three column grid" },
 				React.createElement(
 					"div",
-					{ className: "ui item column" },
+					{ className: "column" },
 					React.createElement(
-						"div",
-						{ className: "content" },
+						"h3",
+						null,
 						" ",
-						dataList.task,
+						GiftList[i].GiftName,
 						" "
 					)
 				),
 				React.createElement(
 					"div",
-					{ className: "ui item column" },
+					{ className: "column" },
 					React.createElement(
-						"div",
-						{ className: "float right content" },
+						"h3",
+						null,
 						" ",
-						resultList[i],
+						item.id,
+						" "
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "column" },
+					React.createElement(
+						"h3",
+						null,
+						" ",
+						item.PlayerName,
 						" "
 					)
 				)
@@ -341,71 +513,53 @@ var RandomNum = React.createClass({
 		});
 		return React.createElement(
 			"div",
-			{ className: "ui item" },
+			null,
 			React.createElement(
 				"div",
-				{ className: this.state.startClass },
+				{ className: "ui two column grid" },
 				React.createElement(
-					"button",
-					{ type: "button", className: "ui icon button", onClick: this.drawStart },
-					"Start"
+					"div",
+					{ className: "column" },
+					" ",
+					React.createElement(
+						"p",
+						null,
+						" "
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "column" },
+					React.createElement(
+						"button",
+						{ className: "ui basic right floated button", onClick: this.handleRestart },
+						React.createElement("i", { className: "remove icon" })
+					)
 				)
 			),
 			React.createElement(
 				"div",
-				{ className: this.state.btnClass },
+				{ className: "ui two column stackable grid" },
 				React.createElement(
 					"div",
-					{ className: "ui raised very padded text container segment" },
+					{ className: "column" },
+					React.createElement(RandomBtn, { RandomList: this.state.RandomList, GiftList: GiftList, FinalList: this.state.FinalList, current: this.state.current, BackDoorList: this.props.BackDoorList, PlayerList: this.props.PlayerList, setCurrent: this.handleCurrent, setFinal: this.handleFinal, setRandom: this.handleRandom })
+				),
+				React.createElement(
+					"div",
+					{ className: "column" },
 					React.createElement(
-						"div",
-						{ className: "ui raised segment" },
-						React.createElement(
-							"h2",
-							{ className: "ui header " },
-							dataList[this.state.currentGift].task
-						),
-						React.createElement(
-							"h1",
-							{ className: "ui header huge center aligned dividing" },
-							" ",
-							this.state.numberR[this.state.current],
-							" "
-						),
-						React.createElement(
-							"p",
-							null,
-							React.createElement(
-								"button",
-								{ type: "button", className: "ui icon button", onClick: this.drawAgain },
-								"Again"
-							),
-							React.createElement(
-								"button",
-								{ type: "button", className: "ui icon button", onClick: this.drawNext },
-								"Next"
-							),
-							React.createElement(
-								"button",
-								{ type: "button", className: "ui icon button", onClick: this.drawReset },
-								"Reset"
-							)
-						),
-						React.createElement(
-							"p",
-							{ className: "notclear" },
-							"To restart from the beginning, refresh the page "
-						)
-					),
-					React.createElement(
-						"h2",
-						{ className: "ui header" },
+						"h1",
+						{ className: "ui blue header huge center aligned dividing" },
 						" Results "
 					),
+					React.createElement("br", null),
 					React.createElement(
 						"div",
 						{ className: "ui middle aligned divided list" },
-						dataPrintList
+						" ",
+						listItem,
+						" "
 					)
 				)
 			)
@@ -413,4 +567,131 @@ var RandomNum = React.createClass({
 	}
 });
 
-React.render(React.createElement(TodoBox, null), document.getElementById('todo'));
+var RandomBtn = React.createClass({
+	displayName: "RandomBtn",
+
+	getInitialState: function getInitialState() {
+		return {
+			btnState: "invisable",
+			AbtnState: "",
+			temp: 0,
+			item: {},
+			finalAnimate: "finalAnimate elementFadeOut",
+			displayState: "invisable"
+		};
+	},
+	drawAgain: function drawAgain() {
+		var newRandom = doRand(this.props.PlayerList.length, this.props.current, this.props.BackDoorList, this.props.RandomList);
+		this.props.setRandom(newRandom.finalList);
+		var index = newRandom.num - 1;
+		var item = this.props.PlayerList[index];
+		var finalAnimate = this.state.finalAnimate == "finalAnimate elementFadeOut" ? "finalAnimate elementFadeOut1" : "finalAnimate elementFadeOut";
+		this.setState({
+			btnState: "",
+			temp: newRandom.num,
+			item: item,
+			finalAnimate: finalAnimate,
+			displayState: ""
+		});
+	},
+	drawNext: function drawNext() {
+		var current = this.props.current;
+		var FinalList = this.props.FinalList;
+		var index = this.state.temp - 1;
+		console.log("this.props.PlayerList[index]");
+		console.log(this.props.PlayerList[index]);
+		var item = this.props.PlayerList[index];
+		FinalList.push(item);
+		this.props.setFinal(FinalList);
+		if (current == this.props.GiftList.length - 1) {
+			this.setState({
+				AbtnState: "invisable",
+				btnState: "invisable",
+				displayState: "invisable"
+			});
+		} else {
+			this.props.setCurrent(current + 1);
+			this.setState({
+				btnState: "invisable",
+				displayState: "invisable"
+			});
+		}
+	},
+	render: function render() {
+		var item = this.state.item;
+		return React.createElement(
+			"div",
+			null,
+			React.createElement(
+				"div",
+				{ className: "ui raised container segment" },
+				React.createElement("br", null),
+				React.createElement(
+					"h1",
+					{ className: "ui blue header " },
+					this.props.GiftList[this.props.current].GiftName
+				),
+				React.createElement("br", null),
+				React.createElement(
+					"div",
+					{ className: this.state.finalAnimate },
+					React.createElement("div", { className: "spinner spinner-1" })
+				),
+				React.createElement(
+					"h1",
+					{ className: "ui header huge center aligned dividing" },
+					React.createElement(
+						"div",
+						{ className: this.state.displayState },
+						React.createElement(
+							"div",
+							{ className: "ui two column grid" },
+							React.createElement(
+								"div",
+								{ className: "column" },
+								item.id
+							),
+							React.createElement(
+								"div",
+								{ className: "column" },
+								item.PlayerName
+							)
+						)
+					)
+				),
+				React.createElement(
+					"div",
+					{ className: "ui two column grid" },
+					React.createElement(
+						"div",
+						{ className: "column" },
+						React.createElement(
+							"div",
+							{ className: this.state.AbtnState },
+							React.createElement(
+								"button",
+								{ type: "button", className: "ui icon button right floated", onClick: this.drawAgain },
+								"Draw!"
+							)
+						)
+					),
+					React.createElement(
+						"div",
+						{ className: "column" },
+						React.createElement(
+							"div",
+							{ className: this.state.btnState },
+							React.createElement(
+								"button",
+								{ type: "button", className: " ui icon button", onClick: this.drawNext },
+								"Next"
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+});
+
+React.render(React.createElement(GiftBox, null), document.getElementById('todo'));
