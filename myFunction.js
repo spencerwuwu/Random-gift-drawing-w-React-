@@ -51,5 +51,45 @@ function getPlayerList(num){
 	return list;
 }
 
+var convertGift = function(List){
+	var index = 0;
+	var output = [];
+	if(List[List.length - 1] == ""){
+		List.pop();
+	}
+	while(index < List.length){
+		var id = generatedId().toString();
+		var item = {"id":id, "GiftName": List[index], "BackDoor": -1};
+		output.push(item);
+		index++;
+	}
+	return output;
+}
+
+var convertPlayer = function(List){
+	var index = 0;
+	var output = [];
+	if(List[List.length - 1] == ""){
+		List.pop();
+	}
+	while(index < List.length){
+		var id = index + 1;
+		var item = {"id":id, "PlayerName": List[index]};
+		output.push(item);
+		index++;
+	}
+	return output;	
+}
+
+var generatedId = function(){
+	return Math.floor(Math.random()*90000) + 10000;
+}
+
+
+
+
+
+
+
 
 

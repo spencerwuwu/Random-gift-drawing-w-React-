@@ -350,17 +350,13 @@ var PlayerExcel = React.createClass({
 	handleText: function(e){
 		var item = e.target.value;
 		var List = item.split('\n');
-		var NewList = convertPlayer(List);
-		this.setState({
-			List: NewList
-		})
 	},
 	submitList: function(){
 		if(this.state.List.length == 0 ){
 			alert("No Content Submit !!");
 		}
 		else{
-			this.props.directPlayer(this.state.List);
+			this.props.directPlayer(convertPlayer(List));
 		}
 	},
 	render: function(){
