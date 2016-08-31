@@ -266,7 +266,9 @@ var GiftExcel = React.createClass({
 var PlayerBox = React.createClass({
 	getInitialState:function(){
 		return{
-			ListState: "invisable"
+			ListState: "invisable",
+			normalPlayer: "",
+			excelPlayer: "invisable",
 		};
 	},
 	handlePlayerChange : function(event){
@@ -296,8 +298,21 @@ var PlayerBox = React.createClass({
 			ListState: state
 		});
 	},
+	changeInput: function(){
+		var normalPlayer = (this.state.normalPlayer == "") ? "invisable" : "";
+		var excelPlayer = (this.state.excelPlayer == "") ? "invisable" : "";
+		this.setState({
+			normalPlayer: normalPlayer,
+			excelPlayer:  excelPlayer
+		});
+	},
 	startDrawing: function(){
+		if(this.props.PlayerList.length == 0){
+			alert("Number of Player is 0 !!");
+		}
+		else{
 		this.props.RandomBoxState("finalPopout");
+		}
 	},
 	render: function(){
 		return(
@@ -306,6 +321,28 @@ var PlayerBox = React.createClass({
 					<div className="content">
 					<i className="users icon"></i>Players</div>
 				</h2>
+				<div className="ui two column grid">
+					<div className="column">
+						<div className={this.state.normalPlayer}>
+							<button type="button" className="ui icon button" onClick={this.changeInput}>
+								Paste from Excel
+							</button>
+						</div>
+						<div className={this.state.excelPlayer}>
+							<button type="button" className="ui icon button" onClick={this.changeInput}>
+								Back to normal mode
+							</button>
+						</div>
+					</div>
+					<div className="column">
+					<div className="ui item right floated">
+						<button type="button" className="ui blue icon button" onClick={this.startDrawing}>
+							Start Drawing <i className="chevron circle right icon"></i>
+						</button>
+					</div>
+					</div>
+				</div>
+				<div className={this.state.normalPlayer}>
 				<div className="ui blue header" >Number of player:</div>
 				<div className="ui left icon input" >
 					<input type="text" onBlur={this.handlePlayerChange} placeholder="Number of Player" defaultValue={this.props.PlayerNumber} />
@@ -321,18 +358,14 @@ var PlayerBox = React.createClass({
 						</div>
 					</div>
 					<div className="column">
-						<div className="ui item right floated">
-										<button type="button" className="ui blue icon button" onClick={this.startDrawing}>
-											Start Drawing <i className="chevron circle right icon"></i>
-										</button>
-						</div>
 					</div>
 				</div>
 				<div className={this.state.ListState}>
 					<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
 				</div>
 
-				<div className>
+				</div>
+				<div className={this.state.excelPlayer}>
 					<PlayerExcel directPlayer={this.directPlayer} PlayerList={this.props.PlayerList} />
 				</div>
 			</div>
@@ -350,13 +383,17 @@ var PlayerExcel = React.createClass({
 	handleText: function(e){
 		var item = e.target.value;
 		var List = item.split('\n');
+		var NewList = convertPlayer(List);
+		this.setState({
+			List: NewList
+		})
 	},
 	submitList: function(){
 		if(this.state.List.length == 0 ){
 			alert("No Content Submit !!");
 		}
 		else{
-			this.props.directPlayer(convertPlayer(List));
+			this.props.directPlayer(this.state.List);
 		}
 	},
 	render: function(){
