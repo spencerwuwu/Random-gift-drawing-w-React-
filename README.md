@@ -1,9 +1,10 @@
 # Random-gift-drawing-w-React-
 
+Arranged by WeiCheng Wu as an intern in FsTop.
 
-<p> <a href="iiia.github.io/random-reactjs">Demo</a>
+<p> <a href="iiia.github.io/Random-gift-drawing-w-React-">Demo</a>
   </br>
-  <a href="http://codepen.io/spencerwu85/pen/yJGVGW"> Checkout at Codepen</a>
+  <a href="http://codepen.io/spencerwu85/pen/wWbPOm"> Checkout at Codepen</a>
   </br>
 This is a simple gift drawing app created with  <a href="https://facebook.github.io/react/">React</a>. Set your gift list and the number of people to draw. You can set each player's name by clicking the 'Edit PlayerName' button. 
   </br>
