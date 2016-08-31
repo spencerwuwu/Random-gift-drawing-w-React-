@@ -154,7 +154,7 @@ var GiftBox = React.createClass({
 				</div>
 				<div className={this.state.RandomBoxState}>
 					<div className="ui raised  container segment">
-						<RandomBox GiftList={this.state.data} handleRestart={this.handleRestart} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} PlayerNumber={this.state.PlayerNumber} />
+						<RandomBox GiftList={this.state.data} handleRestart={this.handleRestart} PlayerList={this.state.PlayerList} PlayerNumber={this.state.PlayerNumber} BackDoorList={this.state.backDoorList} />
 					</div>
 				</div>
 			</div>
@@ -299,6 +299,8 @@ var PlayerBox = React.createClass({
 			ListState2: "",
 			normalPlayer: "",
 			excelPlayer: "invisable",
+			LaMode: "",
+			noBack: ""
 		};
 	},
 	handlePlayerChange : function(event){
@@ -321,21 +323,45 @@ var PlayerBox = React.createClass({
 	directPlayer: function(item){
 		this.props.setPlayer(item);
 		this.props.setPlayerNum(item.length);
+		this.setState({
+			noBack: "invisable"
+		});
 	},
 	handleListstate : function(){
-		var state = (this.state.ListState == "invisable") ? "" : "invisable";
-		var state2 = (this.state.ListState2 == "invisable") ? "" : "invisable";
+		if(this.props.PlayerList.length == 0){
+			alert("Playernum is 0 !!")
+		}
+		else{
+
+			var state = (this.state.ListState == "invisable") ? "" : "invisable";
+			var state2 = (this.state.ListState2 == "invisable") ? "" : "invisable";
+			this.setState({
+				ListState: state,
+				ListState2: state2,
+				LaMode: "invisable"
+			});
+		
+		}
+
+	},
+	changeInputExcel: function(){
+		var normalPlayer = "invisable";
+		var excelPlayer = "";
 		this.setState({
-			ListState: state,
-			ListState2: state2
+			normalPlayer: normalPlayer,
+			excelPlayer:  excelPlayer,
+			ListState: "invisable",
+			ListState2: "",
 		});
 	},
 	changeInput: function(){
-		var normalPlayer = (this.state.normalPlayer == "") ? "invisable" : "";
-		var excelPlayer = (this.state.excelPlayer == "") ? "invisable" : "";
+		var normalPlayer = "";
+		var excelPlayer = "invisable";
 		this.setState({
 			normalPlayer: normalPlayer,
-			excelPlayer:  excelPlayer
+			excelPlayer:  excelPlayer,
+			ListState: "invisable",
+			ListState2: "",
 		});
 	},
 	startDrawing: function(){
@@ -361,14 +387,16 @@ var PlayerBox = React.createClass({
 				<div className="ui two column grid">
 					<div className="column">
 						<div className={this.state.normalPlayer}>
-							<button type="button" className="ui icon button" onClick={this.changeInput}>
+							<button type="button" className="ui icon button" onClick={this.changeInputExcel}>
 								Paste from Excel <i className="file excel outline icon"></i>
 							</button>
 						</div>
-						<div className={this.state.excelPlayer}>
+						<div className={this.state.excelPlayer} >
+							<div className={this.state.noBack}>
 							<button type="button" className="ui icon button" onClick={this.changeInput}>
 								Back to normal mode <i className="undo icon"> </i>
 							</button>
+							</div>
 						</div>
 					</div>
 					<div className="column">
@@ -381,23 +409,21 @@ var PlayerBox = React.createClass({
 				</div>
 				<p> </p>
 				<div className={this.state.normalPlayer}>
+					<div className={this.state.LaMode}>
 					<div className="ui blue header" >Number of player:</div>
 					<div className="ui left icon input" >
 						<input type="text" onBlur={this.handlePlayerChange} placeholder="Number of Player" defaultValue={this.props.PlayerNumber} />
 						<i className="users blue icon"></i>
 					</div>
+					</div>
 					<p> {this.props.PlayerNumber} </p>
-					<div className="ui two column grid">
-						<div className="column">
+						<div className={this.state.LaMode} >
 							<div className="ui item">
 											<button type="button" className="ui icon button" onClick={this.handleListstate}>
-												Edit PlayerName <i className="edit icon"></i>
+												Enter and Edit PlayerName <i className="edit icon"></i>
 											</button>
 							</div>
 						</div>
-						<div className="column">
-						</div>
-					</div>
 
 				</div>
 				<div className={this.state.excelPlayer}>
@@ -407,12 +433,14 @@ var PlayerBox = React.createClass({
 				<div className="ui header dividing">
 					<div className="content">Players:</div>
 				</div>
+				<div >
 					<div className={this.state.ListState}>
 						<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
 					</div>
 					<div className={this.state.ListState2}>
 						<DisplayName PlayerList={this.props.PlayerList} />
 					</div>
+				</div>
 			</div>
 
 		);
