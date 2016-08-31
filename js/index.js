@@ -214,7 +214,7 @@ var GiftBox = React.createClass({
 				React.createElement(
 					"div",
 					{ className: "ui raised  container segment" },
-					React.createElement(RandomBox, { GiftList: this.state.data, handleRestart: this.handleRestart, PlayerList: this.state.PlayerList, PlayerNumber: this.state.PlayerNumber, BackDoorList: this.state.backDoorList, PlayerNumber: this.state.PlayerNumber })
+					React.createElement(RandomBox, { GiftList: this.state.data, handleRestart: this.handleRestart, PlayerList: this.state.PlayerList, PlayerNumber: this.state.PlayerNumber, BackDoorList: this.state.backDoorList })
 				)
 			)
 		);
