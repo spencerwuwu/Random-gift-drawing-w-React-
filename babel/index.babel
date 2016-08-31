@@ -6,12 +6,14 @@ var GiftBox = React.createClass({
 				{"id":"00002","GiftName":"Gift2","BackDoor":-1},
         		{"id":"00003","GiftName":"Gift3","BackDoor":-1} ],
         	backDoorList: [],
-			PlayerNumber: 10,
-			PlayerList: getPlayerList(10),
+			PlayerNumber: 0,
+			PlayerList: getPlayerList(0),
         	leftColumn: "" ,
         	rightColumn: "",
         	BDstate: "invisable",
-        	RandomBoxState: "invisable"
+        	RandomBoxState: "invisable",
+			normalPlayer: "",
+			excelPlayer: "invisable",
 		};
 	},
 	generateId: function () {
@@ -32,6 +34,9 @@ var GiftBox = React.createClass({
 		data = data.concat([{id, GiftName, num}]);
 		this.setState({data});
 	},
+	directSubmit: function(item){
+		this.setState({data:item});
+	},
 	handleAddBackdoor: function(backDoorData){
 		var targetId = backDoorData.id;
 		var backDoorNum = backDoorData.number;
@@ -46,6 +51,14 @@ var GiftBox = React.createClass({
 		this.setState({
 			data: data,
 			backDoorList: backDoorList
+		});
+	},
+	changeInput: function(){
+		var normalPlayer = (this.state.normalPlayer == "") ? "invisable" : "";
+		var excelPlayer = (this.state.excelPlayer == "") ? "invisable" : "";
+		this.setState({
+			normalPlayer: normalPlayer,
+			excelPlayer:  excelPlayer
 		});
 	},
 	handlePlayerList: function(newPlayerList){
@@ -86,8 +99,8 @@ var GiftBox = React.createClass({
 		console.log(this.state.data.map(function(item){
 			return item;
 		}));
-		console.log("Giftbox Playerlist");
-		console.log(this.state.PlayerList);
+		console.log("dataList");
+		console.log(this.state.data);
 		var requireNumber = this.state.data.length;
 		return (
 			<div>
@@ -98,13 +111,35 @@ var GiftBox = React.createClass({
 								<div className="content">
 								<i className="gift icon" onClick={this.activateBD} ></i>Gifts</div>
 							</h2>
-							<GiftForm onGiftNameSubmit={this.handleSubmit} />
+							<div>
+								<div className={this.state.normalPlayer}>
+									<button type="button" className="ui icon button" onClick={this.changeInput}>
+										Paste from Excel <i className="file excel outline icon"></i>
+									</button>
+								</div>
+								<div className={this.state.excelPlayer}>
+									<button type="button" className="ui icon button" onClick={this.changeInput}>
+										Back to normal mode <i className="undo icon"> </i>
+									</button>
+								</div>
+								
+							</div>
 							<p> </p>
-							<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
+							<div className={this.state.normalPlayer}>
+								<GiftForm onGiftNameSubmit={this.handleSubmit} />
+								<p> </p>
+								<div className="notclear"> <p> Press Enter to add new gift to list</p> </div>
+							</div>
+							<div className={this.state.excelPlayer} >
+								<GiftExcel  directGiftNameSubmit={this.directSubmit} />
+							</div>
 							<p> </p>
 							<div className="ui content">
 							</div>							
-							<GiftList data={this.state.data} removeNode={this.handleNodeRemoval} addBackdoor={this.handleAddBackdoor} BDstate={this.state.BDstate} />
+							<p></p>
+							<div className="ui blue dividing header" >Gift List</div>
+
+							<GiftList data={this.state.data} normalPlayer={this.state.normalPlayer} removeNode={this.handleNodeRemoval} addBackdoor={this.handleAddBackdoor} BDstate={this.state.BDstate} />
 
 						</div>
 					</div>
@@ -140,11 +175,11 @@ var GiftList = React.createClass({
 	render: function() {
 		var listNodes = this.props.data.map(function (listItem) {
 			return (
-				<GiftItem key={listItem.id} nodeId={listItem.id} GiftName={listItem.GiftName} removeNode={this.removeNode} addBackdoor={this.addBackdoor} BDstate={this.props.BDstate} />
+				<GiftItem normalPlayer={this.props.normalPlayer} key={listItem.id} nodeId={listItem.id} GiftName={listItem.GiftName} removeNode={this.removeNode} addBackdoor={this.addBackdoor} BDstate={this.props.BDstate} />
 			);
 		},this);
 		return (
-			<div className="ui middle aligned divided list" >
+			<div className="ui middle aligned list" >
 				{listNodes}
 			</div>
 		);
@@ -165,16 +200,18 @@ var GiftItem = React.createClass({
 		return;
 
 	},
-	updateClass: function () {
+	updateClass: function (event) {
 		
 	},
 	render: function() {
 		return (
 			<div className="ui item" >
 				<div  role="group" className="right floated content" >
-					<button type="button" className="ui icon button " onClick={this.removeNode}>
-						<i className="remove icon"></i>
-					</button>
+						<div className={this.props.normalPlayer}>
+							<button type="button" className="ui icon button " onClick={this.removeNode}>
+								<i className="remove icon"></i>
+							</button>
+						</div>
 					<div className={this.props.BDstate}>
 						<div className="ui transparent input">
 							<input type="text" onBlur={this.addBackdoor} placeholder="Player no." />
@@ -200,13 +237,56 @@ var GiftForm = React.createClass({
 	},
 	render: function() {
 		return (
-					<form onSubmit={this.doSubmit} className="ui item container" >
+				<div>
+						<form onSubmit={this.doSubmit} className="ui item container" >
 							<div htmlFor="GiftName" className="ui blue header" >Add New Gift:</div>
 							<div className="ui small icon input" >
 								<input type="text" id="GiftName" ref="GiftName" className="" placeholder="New Gifts" />
   								<i className="plus blue icon"></i>
 							</div>
 					</form>
+					
+				</div>
+		);
+	}
+});
+
+var GiftExcel = React.createClass({
+	getInitialState: function(){
+		return{
+			List: [],
+		};
+	},
+	handleText: function(event){
+		var input = event.target.value;
+		var List = input.split('\n');
+		console.log(List);
+		var NewList = convertGift(List);
+		this.setState({
+			List: NewList
+		});
+	},
+	submitList: function(){
+		if(this.state.List.length == 0){
+			alert("No Content submit!");
+		}
+		else{
+		this.props.directGiftNameSubmit(this.state.List);
+		}
+	},
+	render: function() {
+		return(
+		<div>
+
+					<form className="ui reply form">
+	   					<div className="field">
+	   					   <textarea onBlur={this.handleText} placeholder="Paste a List from Excel" ></textarea>
+	   					</div>
+	    					<div className="ui blue labeled submit icon button" onClick={this.submitList} >
+	   						   <i className="icon edit"></i> Apply List
+	  					</div>
+	  				</form>
+		</div>
 		);
 	}
 });
@@ -215,7 +295,9 @@ var GiftForm = React.createClass({
 var PlayerBox = React.createClass({
 	getInitialState:function(){
 		return{
-			ListState: "invisable"
+			ListState: "invisable",
+			normalPlayer: "",
+			excelPlayer: "invisable",
 		};
 	},
 	handlePlayerChange : function(event){
@@ -235,14 +317,36 @@ var PlayerBox = React.createClass({
 		PlayerList[index].PlayerName = targetName;
 		this.props.setPlayer = PlayerList;
 	},
+	directPlayer: function(item){
+		this.props.setPlayer(item);
+		this.props.setPlayerNum(item.length);
+	},
 	handleListstate : function(){
 		var state = (this.state.ListState == "invisable") ? "" : "invisable";
 		this.setState({
 			ListState: state
 		});
 	},
+	changeInput: function(){
+		var normalPlayer = (this.state.normalPlayer == "") ? "invisable" : "";
+		var excelPlayer = (this.state.excelPlayer == "") ? "invisable" : "";
+		this.setState({
+			normalPlayer: normalPlayer,
+			excelPlayer:  excelPlayer
+		});
+	},
 	startDrawing: function(){
-		this.props.RandomBoxState("finalPopout");
+		if(this.props.PlayerList.length == 0){
+			alert("Number of Player is 0 !!");
+		}
+		else{
+			if(this.props.data.length == 0){
+					alert("Number of Gift is 0 !!");
+			}
+			else{
+				this.props.RandomBoxState("finalPopout");
+			}
+		}
 	},
 	render: function(){
 		return(
@@ -251,33 +355,108 @@ var PlayerBox = React.createClass({
 					<div className="content">
 					<i className="users icon"></i>Players</div>
 				</h2>
-				<div className="ui blue header" >Number of player:</div>
-				<div className="ui left icon input" >
-					<input type="text" onBlur={this.handlePlayerChange} placeholder="Player number, default 10" defaultValue={this.props.PlayerNumber} />
-					<i className="users blue icon"></i>
-				</div>
-				<p> {this.props.PlayerNumber} </p>
 				<div className="ui two column grid">
 					<div className="column">
-						<div className="ui item">
-										<button type="button" className="ui icon button" onClick={this.handleListstate}>
-											Edit PlayerName <i className="edit icon"></i>
-										</button>
+						<div className={this.state.normalPlayer}>
+							<button type="button" className="ui icon button" onClick={this.changeInput}>
+								Paste from Excel <i className="file excel outline icon"></i>
+							</button>
+						</div>
+						<div className={this.state.excelPlayer}>
+							<button type="button" className="ui icon button" onClick={this.changeInput}>
+								Back to normal mode <i className="undo icon"> </i>
+							</button>
 						</div>
 					</div>
 					<div className="column">
-						<div className="ui item right floated">
-										<button type="button" className="ui blue icon button" onClick={this.startDrawing}>
-											Start Drawing <i className="chevron circle right icon"></i>
-										</button>
-						</div>
+					<div className="ui item right floated">
+						<button type="button" className="ui blue icon button" onClick={this.startDrawing}>
+							Start Drawing <i className="chevron circle right icon"></i>
+						</button>
+					</div>
 					</div>
 				</div>
-				<div className={this.state.ListState}>
-					<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
+				<p> </p>
+				<div className={this.state.normalPlayer}>
+					<div className="ui blue header" >Number of player:</div>
+					<div className="ui left icon input" >
+						<input type="text" onBlur={this.handlePlayerChange} placeholder="Number of Player" defaultValue={this.props.PlayerNumber} />
+						<i className="users blue icon"></i>
+					</div>
+					<p> {this.props.PlayerNumber} </p>
+					<div className="ui two column grid">
+						<div className="column">
+							<div className="ui item">
+											<button type="button" className="ui icon button" onClick={this.handleListstate}>
+												Edit PlayerName <i className="edit icon"></i>
+											</button>
+							</div>
+						</div>
+						<div className="column">
+						</div>
+					</div>
+					<div className={this.state.ListState}>
+						<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
+					</div>
+
+				</div>
+				<div className={this.state.excelPlayer}>
+					<PlayerExcel directPlayer={this.directPlayer} PlayerList={this.props.PlayerList} />
 				</div>
 			</div>
 
+		);
+	}
+});
+
+var PlayerExcel = React.createClass({
+	getInitialState: function(){
+		return{
+			List: []
+		}
+	},
+	handleText: function(e){
+		var item = e.target.value;
+		var List = item.split('\n');
+		var NewList = convertPlayer(List);
+		this.setState({
+			List: NewList
+		})
+	},
+	submitList: function(){
+		if(this.state.List.length == 0 ){
+			alert("No Content Submit !!");
+		}
+		else{
+			this.props.directPlayer(this.state.List);
+		}
+	},
+	render: function(){
+		var PlayerList = this.props.PlayerList;
+		var List = PlayerList.map(function(item){
+			return(
+				<div className="ui">
+					<div className="ui"> {item.id} - {item.PlayerName} </div>
+				</div>	
+			      );
+		});
+		return(
+			<div>
+				<form className="ui reply form">
+		   				<div className="field">
+		   				   <textarea onBlur={this.handleText} placeholder="Paste a List from Excel" ></textarea>
+		   				</div>
+		    			<div className="ui blue labeled submit icon button" onClick={this.submitList} >
+		   				   <i className="icon edit"></i> Add Player
+		  				</div>
+		  		</form>	
+				<div className="ui header dividing">
+					<div className="content">Plays:</div>
+				</div>
+				<div className="ui middle aligned divided list">
+					{ List }
+				</div>
+			</div>
 		);
 	}
 });
