@@ -389,7 +389,9 @@ var PlayerBox = React.createClass({
 			ListState: "invisable",
 			ListState2: "",
 			normalPlayer: "",
-			excelPlayer: "invisable"
+			excelPlayer: "invisable",
+			LaMode: "",
+			noBack: ""
 		};
 	},
 	handlePlayerChange: function handlePlayerChange(event) {
@@ -411,21 +413,42 @@ var PlayerBox = React.createClass({
 	directPlayer: function directPlayer(item) {
 		this.props.setPlayer(item);
 		this.props.setPlayerNum(item.length);
+		this.setState({
+			noBack: "invisable"
+		});
 	},
 	handleListstate: function handleListstate() {
-		var state = this.state.ListState == "invisable" ? "" : "invisable";
-		var state2 = this.state.ListState2 == "invisable" ? "" : "invisable";
+		if (this.props.PlayerList.length == 0) {
+			alert("Playernum is 0 !!");
+		} else {
+
+			var state = this.state.ListState == "invisable" ? "" : "invisable";
+			var state2 = this.state.ListState2 == "invisable" ? "" : "invisable";
+			this.setState({
+				ListState: state,
+				ListState2: state2,
+				LaMode: "invisable"
+			});
+		}
+	},
+	changeInputExcel: function changeInputExcel() {
+		var normalPlayer = "invisable";
+		var excelPlayer = "";
 		this.setState({
-			ListState: state,
-			ListState2: state2
+			normalPlayer: normalPlayer,
+			excelPlayer: excelPlayer,
+			ListState: "invisable",
+			ListState2: ""
 		});
 	},
 	changeInput: function changeInput() {
-		var normalPlayer = this.state.normalPlayer == "" ? "invisable" : "";
-		var excelPlayer = this.state.excelPlayer == "" ? "invisable" : "";
+		var normalPlayer = "";
+		var excelPlayer = "invisable";
 		this.setState({
 			normalPlayer: normalPlayer,
-			excelPlayer: excelPlayer
+			excelPlayer: excelPlayer,
+			ListState: "invisable",
+			ListState2: ""
 		});
 	},
 	startDrawing: function startDrawing() {
@@ -464,7 +487,7 @@ var PlayerBox = React.createClass({
 						{ className: this.state.normalPlayer },
 						React.createElement(
 							"button",
-							{ type: "button", className: "ui icon button", onClick: this.changeInput },
+							{ type: "button", className: "ui icon button", onClick: this.changeInputExcel },
 							"Paste from Excel ",
 							React.createElement("i", { className: "file excel outline icon" })
 						)
@@ -473,13 +496,17 @@ var PlayerBox = React.createClass({
 						"div",
 						{ className: this.state.excelPlayer },
 						React.createElement(
-							"button",
-							{ type: "button", className: "ui icon button", onClick: this.changeInput },
-							"Back to normal mode ",
+							"div",
+							{ className: this.state.noBack },
 							React.createElement(
-								"i",
-								{ className: "undo icon" },
-								" "
+								"button",
+								{ type: "button", className: "ui icon button", onClick: this.changeInput },
+								"Back to normal mode ",
+								React.createElement(
+									"i",
+									{ className: "undo icon" },
+									" "
+								)
 							)
 						)
 					)
@@ -509,14 +536,18 @@ var PlayerBox = React.createClass({
 				{ className: this.state.normalPlayer },
 				React.createElement(
 					"div",
-					{ className: "ui blue header" },
-					"Number of player:"
-				),
-				React.createElement(
-					"div",
-					{ className: "ui left icon input" },
-					React.createElement("input", { type: "text", onBlur: this.handlePlayerChange, placeholder: "Number of Player", defaultValue: this.props.PlayerNumber }),
-					React.createElement("i", { className: "users blue icon" })
+					{ className: this.state.LaMode },
+					React.createElement(
+						"div",
+						{ className: "ui blue header" },
+						"Number of player:"
+					),
+					React.createElement(
+						"div",
+						{ className: "ui left icon input" },
+						React.createElement("input", { type: "text", onBlur: this.handlePlayerChange, placeholder: "Number of Player", defaultValue: this.props.PlayerNumber }),
+						React.createElement("i", { className: "users blue icon" })
+					)
 				),
 				React.createElement(
 					"p",
@@ -527,22 +558,17 @@ var PlayerBox = React.createClass({
 				),
 				React.createElement(
 					"div",
-					{ className: "ui two column grid" },
+					{ className: this.state.LaMode },
 					React.createElement(
 						"div",
-						{ className: "column" },
+						{ className: "ui item" },
 						React.createElement(
-							"div",
-							{ className: "ui item" },
-							React.createElement(
-								"button",
-								{ type: "button", className: "ui icon button", onClick: this.handleListstate },
-								"Edit PlayerName ",
-								React.createElement("i", { className: "edit icon" })
-							)
+							"button",
+							{ type: "button", className: "ui icon button", onClick: this.handleListstate },
+							"Enter and Edit PlayerName ",
+							React.createElement("i", { className: "edit icon" })
 						)
-					),
-					React.createElement("div", { className: "column" })
+					)
 				)
 			),
 			React.createElement(
@@ -562,13 +588,17 @@ var PlayerBox = React.createClass({
 			),
 			React.createElement(
 				"div",
-				{ className: this.state.ListState },
-				React.createElement(PlayerList, { mydata: this.props.PlayerList, setPlayer: this.handlePlayer })
-			),
-			React.createElement(
-				"div",
-				{ className: this.state.ListState2 },
-				React.createElement(DisplayName, { PlayerList: this.props.PlayerList })
+				null,
+				React.createElement(
+					"div",
+					{ className: this.state.ListState },
+					React.createElement(PlayerList, { mydata: this.props.PlayerList, setPlayer: this.handlePlayer })
+				),
+				React.createElement(
+					"div",
+					{ className: this.state.ListState2 },
+					React.createElement(DisplayName, { PlayerList: this.props.PlayerList })
+				)
 			)
 		);
 	}
