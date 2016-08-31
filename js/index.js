@@ -387,6 +387,7 @@ var PlayerBox = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			ListState: "invisable",
+			ListState2: "",
 			normalPlayer: "",
 			excelPlayer: "invisable"
 		};
@@ -413,8 +414,10 @@ var PlayerBox = React.createClass({
 	},
 	handleListstate: function handleListstate() {
 		var state = this.state.ListState == "invisable" ? "" : "invisable";
+		var state2 = this.state.ListState2 == "invisable" ? "" : "invisable";
 		this.setState({
-			ListState: state
+			ListState: state,
+			ListState2: state2
 		});
 	},
 	changeInput: function changeInput() {
@@ -540,17 +543,32 @@ var PlayerBox = React.createClass({
 						)
 					),
 					React.createElement("div", { className: "column" })
-				),
-				React.createElement(
-					"div",
-					{ className: this.state.ListState },
-					React.createElement(PlayerList, { mydata: this.props.PlayerList, setPlayer: this.handlePlayer })
 				)
 			),
 			React.createElement(
 				"div",
 				{ className: this.state.excelPlayer },
 				React.createElement(PlayerExcel, { directPlayer: this.directPlayer, PlayerList: this.props.PlayerList })
+			),
+			React.createElement("p", null),
+			React.createElement(
+				"div",
+				{ className: "ui header dividing" },
+				React.createElement(
+					"div",
+					{ className: "content" },
+					"Players:"
+				)
+			),
+			React.createElement(
+				"div",
+				{ className: this.state.ListState },
+				React.createElement(PlayerList, { mydata: this.props.PlayerList, setPlayer: this.handlePlayer })
+			),
+			React.createElement(
+				"div",
+				{ className: this.state.ListState2 },
+				React.createElement(DisplayName, { PlayerList: this.props.PlayerList })
 			)
 		);
 	}
@@ -580,22 +598,6 @@ var PlayerExcel = React.createClass({
 		}
 	},
 	render: function render() {
-		var PlayerList = this.props.PlayerList;
-		var List = PlayerList.map(function (item) {
-			return React.createElement(
-				"div",
-				{ className: "ui" },
-				React.createElement(
-					"div",
-					{ className: "ui" },
-					" ",
-					item.id,
-					" - ",
-					item.PlayerName,
-					" "
-				)
-			);
-		});
 		return React.createElement(
 			"div",
 			null,
@@ -613,16 +615,33 @@ var PlayerExcel = React.createClass({
 					React.createElement("i", { className: "icon edit" }),
 					" Add Player"
 				)
-			),
-			React.createElement(
+			)
+		);
+	}
+});
+var DisplayName = React.createClass({
+	displayName: "DisplayName",
+
+	render: function render() {
+		var PlayerList = this.props.PlayerList;
+		var List = PlayerList.map(function (item) {
+			return React.createElement(
 				"div",
-				{ className: "ui header dividing" },
+				{ className: "ui" },
 				React.createElement(
 					"div",
-					{ className: "content" },
-					"Plays:"
+					{ className: "ui" },
+					" ",
+					item.id,
+					".  ",
+					item.PlayerName,
+					" "
 				)
-			),
+			);
+		});
+		return React.createElement(
+			"div",
+			null,
 			React.createElement(
 				"div",
 				{ className: "ui middle aligned divided list" },
@@ -630,6 +649,7 @@ var PlayerExcel = React.createClass({
 			)
 		);
 	}
+
 });
 
 var PlayerList = React.createClass({
