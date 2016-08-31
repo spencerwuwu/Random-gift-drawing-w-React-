@@ -296,6 +296,7 @@ var PlayerBox = React.createClass({
 	getInitialState:function(){
 		return{
 			ListState: "invisable",
+			ListState2: "",
 			normalPlayer: "",
 			excelPlayer: "invisable",
 		};
@@ -323,8 +324,10 @@ var PlayerBox = React.createClass({
 	},
 	handleListstate : function(){
 		var state = (this.state.ListState == "invisable") ? "" : "invisable";
+		var state2 = (this.state.ListState2 == "invisable") ? "" : "invisable";
 		this.setState({
-			ListState: state
+			ListState: state,
+			ListState2: state2
 		});
 	},
 	changeInput: function(){
@@ -395,14 +398,21 @@ var PlayerBox = React.createClass({
 						<div className="column">
 						</div>
 					</div>
-					<div className={this.state.ListState}>
-						<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
-					</div>
 
 				</div>
 				<div className={this.state.excelPlayer}>
 					<PlayerExcel directPlayer={this.directPlayer} PlayerList={this.props.PlayerList} />
 				</div>
+				<p></p>
+				<div className="ui header dividing">
+					<div className="content">Players:</div>
+				</div>
+					<div className={this.state.ListState}>
+						<PlayerList mydata={this.props.PlayerList} setPlayer={this.handlePlayer}  />
+					</div>
+					<div className={this.state.ListState2}>
+						<DisplayName PlayerList={this.props.PlayerList} />
+					</div>
 			</div>
 
 		);
@@ -432,14 +442,6 @@ var PlayerExcel = React.createClass({
 		}
 	},
 	render: function(){
-		var PlayerList = this.props.PlayerList;
-		var List = PlayerList.map(function(item){
-			return(
-				<div className="ui">
-					<div className="ui"> {item.id} - {item.PlayerName} </div>
-				</div>	
-			      );
-		});
 		return(
 			<div>
 				<form className="ui reply form">
@@ -450,16 +452,33 @@ var PlayerExcel = React.createClass({
 		   				   <i className="icon edit"></i> Add Player
 		  				</div>
 		  		</form>	
-				<div className="ui header dividing">
-					<div className="content">Plays:</div>
-				</div>
+			</div>
+		);
+	}
+});
+var DisplayName = React.createClass({
+	render: function(){
+		var PlayerList = this.props.PlayerList;
+		var List = PlayerList.map(function(item){
+			return(
+				<div className="ui">
+					<div className="ui"> {item.id}.  {item.PlayerName} </div>
+				</div>	
+			      );
+		});
+		return(
+			<div>
+			
 				<div className="ui middle aligned divided list">
 					{ List }
 				</div>
 			</div>
 		);
+
 	}
+
 });
+
 
 var PlayerList = React.createClass({
 	handlePlayer: function (newPlayer){
