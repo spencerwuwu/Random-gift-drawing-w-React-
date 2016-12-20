@@ -2,7 +2,7 @@
 
 Arranged by WeiCheng Wu as an intern in FsTop.
 
-<p> <a href="iiia.github.io/Random-gift-drawing-w-React-">Demo</a>
+<p> <a href="http://iiia.github.io/Random-gift-drawing-w-React-">Demo</a>
   </br>
   <a href="http://codepen.io/spencerwu85/pen/wWbPOm"> Checkout at Codepen</a>
   </br>
